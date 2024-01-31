@@ -1,6 +1,6 @@
 <div align="center">
 <article style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <h1 style="width: 100%; text-align: center;">Design Kit</h1>
+    <p align="center"><img width="300" src="https://github.com/TALXIS/tools-designkit-figma/blob/master/src/assets/logo.png" /></p>
     <p>
         Figma plugin for authoring and exporting Power Apps solution components
     </p>
