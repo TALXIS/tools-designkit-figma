@@ -18,5 +18,9 @@
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery,Form) as a zip file
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
 
+## Roadmap
+- [ ] Add Import/Export for the Canvas Apps
+- [ ] Add Helper screen - Canvas, Model Driven templates
+- [ ] Pre-prepared Design system for Power Platform apps
 ## License
 The full text of the license can be accessed via [this link](https://opensource.org/license/gpl-3-0/) and is also included in the [license.txt](license.txt) file of this software package.
