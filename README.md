@@ -27,7 +27,7 @@
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery, Form) as a zip file
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
 
-## Roadmap
+## ⚡️ Roadmap
 - [ ] Add Import/Export for the Canvas Apps
 - [ ] Add Helper screen - Canvas, Model Driven templates
 - [ ] Pre-prepared Design system for Power Platform apps
