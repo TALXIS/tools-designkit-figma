@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/ui.css';
 import { DesktopArrowDown20Regular,DesktopArrowRight20Regular} from "@fluentui/react-icons";
-import { useId, Button,PositioningProps, Title1,Image,Label,Input,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Table, TableBody, TableRow, TableCell, Checkbox } from '@fluentui/react-components';
+import { useId, Button,PositioningProps, Subtitle1,Image,Label,Input,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Table, TableBody, TableRow, TableCell, Checkbox } from '@fluentui/react-components';
 
 import type { CheckboxProps } from "@fluentui/react-components";
 import JSZip from 'jszip';
@@ -160,7 +160,7 @@ function App(props: PositioningProps) {
         <br/>
         <Label htmlFor={pageId}>Page ID *</Label>
         <Input appearance='outline' id={pageId} /> */}
-        <Label id='lbl' size='medium'>Please select a Frame to be exported</Label>
+        <Label id='lbl2' size='medium'>Please select a Frame to be exported</Label>
         <br />
         <Button appearance="primary" onClick={onCreate}>SUBMIT</Button>
       </div>
@@ -169,7 +169,7 @@ function App(props: PositioningProps) {
     return (
       <div id='upper'>
         <div className='middle'>
-        {/* <Image className='img' src={logo} height={80} /> */}
+          <Image className='img' src={logo} height={50} />  
           <br/>
           <br/>
           <Label id='lbl' size='medium'>Make a Customer design by one click</Label>
@@ -181,9 +181,13 @@ function App(props: PositioningProps) {
         </TabList>
 
         <div>
-        {selectedValue === "import" && <Import />}
-        {selectedValue === "export" && <Export />}
-      </div>
+          {selectedValue === "import" && <Import />}
+          {selectedValue === "export" && <Export />}
+        </div>
+        <div id='footer'>
+          <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
+          <Subtitle1 id='footerText2'>version 0.1</Subtitle1>
+        </div>
     </div>
     );
   }

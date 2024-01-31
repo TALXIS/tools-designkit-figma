@@ -4,24 +4,36 @@ body {
     margin: 0px;
   }
   
-  #top {
+#top {
     background-color: black;
     width: 100%;
-  }
-
+}
 .txt {
     color: white;
     padding-left: 15px;
 }
 .middle {
   padding-top: 20px;
-  text-align: center;
-  width: 100%;
+  display: grid;
+  justify-content: center;
+}
+
+.img {
+  padding-left: 40px;
 }
 
 #lbl {
-  font-family: sans-serif;
-  font-size: 15px;
+  margin-top: -20px;
+  font-family: "Montserrat";
+  font-size: 17px;
+  font-weight: 700;
+  color: #262626;
+}
+
+#lb2 {
+  font-family: "Montserrat";
+  font-size: 17px;
+  font-weight: 500;
   color: #262626;
 }
 
@@ -33,4 +45,23 @@ body {
   padding-top: 20px;
   display: grid;
   justify-content: center;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 20px;
+  text-align: center;
+  vertical-align: top;
+  width: 100%;
+}
+#footerText {
+  font-size: 19px;
+  font-family: 'Poppins';
+  font-weight: 200;
+}
+#footerText2 {
+  font-size: 13px;
+  font-family: 'Poppins';
+  font-weight: 200;
 }
