@@ -12,6 +12,7 @@
 <div align="center">
 	
 </div>
+</div>
 
 # 🎉 Features
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery,Form) as a zip file
