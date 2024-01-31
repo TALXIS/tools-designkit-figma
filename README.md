@@ -31,5 +31,12 @@
 - [ ] Add Import/Export for the Canvas Apps
 - [ ] Add Helper screen - Canvas, Model Driven templates
 - [ ] Pre-prepared Design system for Power Platform apps
+
+# 🔥 Contribute
+* Run `npm ci` to install dependencies.
+* Run `npm run start` to start webpack in watch mode or `npm run build` to build once.
+* Open `Figma` -> `Plugins` -> `Development` -> `New Plugin...` and choose `manifest.json` file from this repo.
+* Create a Pull request for your branch
+
 ## License
 The full text of the license can be accessed via [this link](https://opensource.org/license/gpl-3-0/) and is also included in the [license.txt](license.txt) file of this software package.
