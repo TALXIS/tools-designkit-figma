@@ -1,0 +1,16 @@
+{
+  "name": "DesignKit",
+  "id": "1293270783564300545",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "ui": "dist/ui.html",
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "The plugin supports importing of images as property that could be a link from a website"
+  }
+}
