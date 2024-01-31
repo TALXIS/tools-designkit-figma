@@ -12,10 +12,13 @@
 </div>
 
 > [!WARNING]
-> This not ready for production use yet!
+> This not ready for production use yet! Under active development.
+
+> [!IMPORTANT]
+> We will release new versions of the plugin in the next couple of weeks! It can be downloaded and tried through your Figma desktop app. Let's help each other out by reporting issues on our repo :) 
 
 # 🎉 Features
-- Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery,Form) as a zip file
+- Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery, Form) as a zip file
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
 
 ## Roadmap
