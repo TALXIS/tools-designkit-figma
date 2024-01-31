@@ -19,19 +19,19 @@ body {
 }
 
 .img {
-  padding-left: 40px;
+  padding-left: 120px;
 }
 
 #lbl {
   margin-top: -20px;
-  font-family: "Montserrat";
+  font-family: sans-serif;
   font-size: 17px;
   font-weight: 700;
   color: #262626;
 }
 
 #lb2 {
-  font-family: "Montserrat";
+  font-family: sans-serif;
   font-size: 17px;
   font-weight: 500;
   color: #262626;
@@ -57,11 +57,11 @@ body {
 }
 #footerText {
   font-size: 19px;
-  font-family: 'Poppins';
+  font-family: sans-serif;
   font-weight: 200;
 }
 #footerText2 {
   font-size: 13px;
-  font-family: 'Poppins';
+  font-family: sans-serif;
   font-weight: 200;
 }
