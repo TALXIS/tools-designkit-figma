@@ -30,7 +30,7 @@ If wish to use this project for your team, please contact us at info@mycondy.com
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
 
 ## ⚡️ Roadmap
-- [ ] Add Import/Export for the Canvas Apps
+- [x] Add Import/Export for the Canvas Apps
 - [ ] Add Helper screen - Canvas, Model Driven templates
 - [ ] Pre-prepared Design system for Power Platform apps
 
