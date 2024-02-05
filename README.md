@@ -28,6 +28,7 @@ If wish to use this project for your team, please contact us at info@mycondy.com
 ## 🎉 Features
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery, Form) as a zip file
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
+- Add Import/Export for the Canvas Apps (manual is here - https://medium.com/@lukas.lp.pavelka/power-apps-imex-version-2-0-5fd2ab229262)
 
 ## ⚡️ Roadmap
 - [x] Add Import/Export for the Canvas Apps
