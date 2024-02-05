@@ -4,6 +4,7 @@ import { AttributeDescription, DescriptionParam, DisplayNameParam, OptionSetLabe
 import { OptionSetEnumType, TrueFalse01Type } from "../model/interfaces/IOptionSets";
 import { savedQuery } from "../model/SavedQuery";
 import { Entity, EntityAttribute, EntityInfoType, EntityInfoTypeEntity, FieldXmlFieldUIType } from "../model/Entity";
+
 /*
 Function for exporting to the XML
 */

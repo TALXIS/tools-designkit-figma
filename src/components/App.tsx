@@ -1,12 +1,12 @@
 import React from 'react';
 import '../styles/ui.css';
-import { DesktopArrowDown20Regular,DesktopArrowRight20Regular} from "@fluentui/react-icons";
-import { useId, Button,PositioningProps, Subtitle1,Image,Label,Input,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Table, TableBody, TableRow, TableCell, Checkbox } from '@fluentui/react-components';
+import { useId, Button,PositioningProps, Subtitle1,Image,Label,Input,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Table, 
+  TableBody, TableRow, TableCell, Checkbox, Title1,RadioGroup,Radio,RadioGroupOnChangeData } from '@fluentui/react-components';
 
 import type { CheckboxProps } from "@fluentui/react-components";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-
+import { useFilePicker } from 'use-file-picker';
 
 const logo: string = require("../assets/Logo.png").default;
 
@@ -14,12 +14,57 @@ function App(props: PositioningProps) {
   const snippetId = useId("input-snippet");
   const pageId = useId("input-page");
 
+  const [selectedValue, setSelectedValue] = React.useState<TabValue>("canvas");
+
+  const [value, setValue] = React.useState("json");
+  const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
+
+  const jsonPicker = useFilePicker({
+    accept: '.json',
+    onFilesSelected: ({ filesContent }) => {
+      parent.postMessage({ pluginMessage: { type: 'import-json', filesContent } }, '*');
+    },
+  });
+  const yamlPicker = useFilePicker({
+    accept: '.yaml',
+    onFilesSelected: ({ filesContent }) => {
+      parent.postMessage({ pluginMessage: { type: 'import-yaml', filesContent } }, '*');
+    },
+  });
+
   React.useEffect(() => {
     window.onmessage = async (event) => {
       let data = event.data.pluginMessage;
       
-      
       if(data != undefined) {
+        if(data.pluginMessage.type == "yaml") {
+          let names = data.pluginMessage.names;
+          if(data.pluginMessage.yaml.length == 1) {
+            const fileName = names[0];
+            const file = new Blob([data.pluginMessage.yaml], { type: 'application/yaml' });
+            let link = document.createElement('a');
+            link.target = '_blank';
+            link.href = window.URL.createObjectURL(file);
+            var name = fileName.concat('.fx.yaml');
+            link.setAttribute("download", name);
+            link.click();
+            URL.revokeObjectURL(link.href);
+          } else {
+            var zip = new JSZip();
+            for (let i = 0; i < data.pluginMessage.yaml.length; i++) {
+              const fileName = names[i];
+              const file = new Blob([data.pluginMessage.yaml[i]], { type: 'application/yaml' });
+      
+              zip.file(fileName.concat(".fx.yaml"),file);
+            }
+            zip.generateAsync({type:"blob"}).then(function(content){
+              saveAs(content,"exported.zip");
+            });
+          }
+          return;
+        }
+
+
         if(data.pluginMessage.type == "png") {
           fetch(data.pluginMessage.url)
             .then(response => response.blob())
@@ -112,16 +157,78 @@ function App(props: PositioningProps) {
     );
   };
 
-  const onCreate = () => {
-      parent.postMessage({ pluginMessage: { type: 'export-xml' } }, '*');
-    };
+  const onCreate = (type: string) => {
+    if (type == "exportYaml") parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
+    if(type == "tempVac") parent.postMessage({ pluginMessage: { type: 'tempVac' } }, '*');
 
-    const [selectedValue, setSelectedValue] = React.useState<TabValue>("export");
-    const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
+    if(type == "exportMD") parent.postMessage({ pluginMessage: { type: 'export-xml' } }, '*');
+  };
+
+  const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
       setSelectedValue(data.value);
-    };
+      if (data.value == "canvas") {
+        if (value == "yaml") {
+          setSelectedContent("yamlcontent")
+        } else {
+          setSelectedContent("jsoncontent");
+        }
+      } else {
+        setSelectedContent("export")
+      }
+  };
 
-    const Import = React.memo(() => (
+  const onOptionChange = (ev: React.FormEvent<HTMLDivElement>, data: RadioGroupOnChangeData) => {
+    setValue(data.value);
+
+    if (data.value == "yaml") {
+      setSelectedContent("yamlcontent")
+      return;
+    }
+    setSelectedContent("jsoncontent");
+  }
+
+  const Horizontal = () => (
+    <RadioGroup className='header2' value={value} layout="horizontal" onChange={onOptionChange}>
+      <Radio value="json" label="JSON" />
+      <Radio value="yaml" label="YAML" />
+    </RadioGroup>
+  );
+
+  const Canvas = React.memo(() => (
+    <div id='canvas' role="tabpanel" aria-labelledby="Canvas">
+      <div id='action' className='header'>
+        <Title1 id='action'>ACTION</Title1>
+        <Horizontal />
+      </div>
+    </div>
+  ));
+
+  const JSONContent = React.memo(() => (
+    <div id='jsoncontent'>
+      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
+      <br />
+      <br />
+      <Button appearance="primary" id='files' onClick={() => jsonPicker.openFilePicker()}>Add File(s)</Button>
+    </div>
+  ));
+
+  const YamlContent = React.memo(() => (
+    <div id='yamlcontent'>
+      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
+      <br />
+      <br />
+      <Button appearance="primary" id='files' onClick={() => yamlPicker.openFilePicker()}>Add File(s)</Button>
+      <br />
+      <br />
+      <br />
+      <Subtitle1 id='content'>Export selected Frame(s)</Subtitle1>
+      <br />
+      <br />
+      <Button appearance="primary" onClick={() => onCreate("exportYaml")}>Export</Button>
+    </div>
+  ));
+
+  const Import = React.memo(() => (
       <div id='imp' role="tabpanel" aria-labelledby="Import">
          <Label htmlFor={snippetId}>Snippet link *</Label>
         <Input appearance='outline' id={snippetId} />
@@ -149,7 +256,7 @@ function App(props: PositioningProps) {
         <Checked3 />
         <Checked4 />
         <br />
-        <Button appearance="primary" onClick={onCreate}>SUBMIT</Button>
+        <Button appearance="primary" onClick={() => onCreate("importMD")}>SUBMIT</Button>
       </div>
     ));
 
@@ -162,7 +269,7 @@ function App(props: PositioningProps) {
         <Input appearance='outline' id={pageId} /> */}
         <Label id='lbl2' size='medium'>Please select a Frame to be exported</Label>
         <br />
-        <Button appearance="primary" onClick={onCreate}>SUBMIT</Button>
+        <Button appearance="primary" onClick={() => onCreate("exportMD")}>SUBMIT</Button>
       </div>
     ));
   
@@ -175,18 +282,25 @@ function App(props: PositioningProps) {
           <Label id='lbl' size='medium'>Make a Customer design by one click</Label>
         </div>
         <br/>
-        <TabList id='tab' defaultSelectedValue="Export" selectedValue={selectedValue} onTabSelect={onTabSelect}>
-            {/* <Tab id='Import' icon={<DesktopArrowDown20Regular />} value="import">Import</Tab> */}
-            <Tab id='Export' icon={<DesktopArrowRight20Regular />}  value="export">Export</Tab>
+        <TabList id='tab' defaultSelectedValue="Canvas" selectedValue={selectedValue} onTabSelect={onTabSelect}>
+            {/* <Tab id='Import' value="import">Import</Tab> */}
+            <Tab id='Canvas' value="canvas">Canvas</Tab>
+            <Tab id='Export' value="export">Model Driven</Tab>
         </TabList>
 
         <div>
-          {selectedValue === "import" && <Import />}
+          {selectedValue === "canvas" && <Canvas />}
           {selectedValue === "export" && <Export />}
         </div>
+
+        <div>
+        {selectedContent === "jsoncontent" && <JSONContent />}
+        {selectedContent === "yamlcontent" && <YamlContent />}
+        </div>
+
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 0.1</Subtitle1>
+          <Subtitle1 id='footerText2'>version 0.2</Subtitle1>
         </div>
     </div>
     );

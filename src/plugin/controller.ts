@@ -10,6 +10,13 @@ import { XMLBuilder } from "fast-xml-parser";
 import { SavedQuery } from "../model/SavedQuery";
 import { SystemForm } from "../model/SystemForm";
 
+import * as vscode from 'vscode';
+import { importJSONFiles } from "./Canvas/importers/json-importer";
+import { ScreenSaver } from "../model/Canvas/ScreenSaver";
+import { parseScreen } from "./Canvas/parsers/parser";
+import { importYAMLFiles } from "./Canvas/importers/yaml-importer";
+import { parseSelectedFrames } from "./Canvas/exporters/yaml-exporter";
+
 figma.showUI(__html__);
 figma.ui.resize(400, 650);
 
@@ -93,8 +100,81 @@ figma.ui.onmessage = async msg => {
 
   }
   
+  if(msg.type == "export") {
+    const nodes = figma.currentPage.selection;
+
+    if(nodes != undefined && nodes.length > 0) parseSelectedFrames();
+    else figma.notify("Please select at least one frame");
+  }
+
   if(msg.type === 'import-xml') {
     //importFromXML();
   }
+
+  if(msg.type == "import-json") {
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      const screens = importJSONFiles(msg.filesContent,false);
+      
+      if(screens != undefined) {
+        const saver = new ScreenSaver(screens);
+        screens.forEach(screen => {
+          parseScreen(screen,saver);
+          return;
+        });
+     }
+    });
+   return;
+  }
+
+  if(msg.type == "import-yaml") {
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      const screens = importYAMLFiles(msg.filesContent,false);
+      if(screens != undefined) {
+      const saver = new ScreenSaver(screens);
+      screens.forEach(screen => {
+        parseScreen(screen,saver);
+        return;
+      });
+    }
+  });
+ }
 };
 
+
+async function loadFonts() {
+  await figma.loadFontAsync({
+    family: 'Inter',
+    style: 'Regular',
+  });
+  await figma.loadFontAsync({
+    family: 'Inter',
+    style: 'Bold',
+  });
+  await figma.loadFontAsync({
+    family: "Poppins",
+    style: 'Regular',
+  });
+  await figma.loadFontAsync({
+    family: "Poppins",
+    style: 'Bold',
+  });
+}
+// export function activate(context: vscode.ExtensionContext) {
+//   const handleUri = (uri: vscode.Uri) => {
+//     const queryParams = new URLSearchParams(uri.query);
+  
+//       if (queryParams.has('say')) {
+//         vscode.window.showInformationMessage(`URI Handler says: ${queryParams.get('say') as string}`);
+//       }
+//     };
+  
+//     context.subscriptions.push(
+//       vscode.window.registerUriHandler({
+//         handleUri
+//       })
+//     );
+// }

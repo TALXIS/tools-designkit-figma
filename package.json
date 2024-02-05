@@ -13,10 +13,12 @@
   "dependencies": {
     "@fluentui/react-components": "^9.35.1",
     "@types/node": "^20.9.0",
+    "@types/vscode": "^1.86.0",
     "fast-xml-parser": "^4.3.2",
     "figma-api": "^1.11.0",
     "file-saver": "^2.0.5",
     "html-webpack-plugin": "^5.5.3",
+    "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "react": "^18.2.0",
     "react-dev-utils": "^12.0.1",
@@ -24,7 +26,8 @@
     "react-tabs": "^6.0.2",
     "typescript-guid": "^1.0.3",
     "url-loader": "^4.1.1",
-    "xml-writer": "^1.7.0"
+    "xml-writer": "^1.7.0",
+    "use-file-picker": "^2.1.1"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.79.0",
