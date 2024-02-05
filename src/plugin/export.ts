@@ -112,10 +112,8 @@ export function exportEntitytoXML(savedquery: savedQuery) {
 
       if(savedQueryParent != undefined) {
         const gridNode = findNodeByNameAndParentID("[Grid]",savedQueryParent.id);
-        console.info(gridNode);
         if(gridNode != undefined) {
           const columnNodes = findNodesByNameAndParentID("[Column]",gridNode.id);
-          console.info(columnNodes);
           const attributes: EntityAttribute[] = [];
           
           if(columnNodes != undefined) {

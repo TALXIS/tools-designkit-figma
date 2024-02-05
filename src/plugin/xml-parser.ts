@@ -11,8 +11,10 @@ export function nodeToXML(node: SceneNode,componentName: string) {
         case "SiteMap": {
             const areas:  SiteMapTypeArea[] = [];
             const componentProperties = (node as InstanceNode).componentProperties;
-            
-            const name = getPropertyValue(componentProperties,"Unique name");
+            var name = undefined;
+            if(componentProperties != undefined) {
+                name = getPropertyValue(componentProperties,"Unique name");
+            }
             const uniqueName = name != undefined ? name : "ntg_sitemap";
 
             var areaNode = findNodeByNameAndParentID("Area",node.id);
