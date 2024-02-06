@@ -13,7 +13,6 @@
   "dependencies": {
     "@fluentui/react-components": "^9.35.1",
     "@types/node": "^20.9.0",
-    "@types/vscode": "^1.86.0",
     "fast-xml-parser": "^4.3.2",
     "figma-api": "^1.11.0",
     "file-saver": "^2.0.5",

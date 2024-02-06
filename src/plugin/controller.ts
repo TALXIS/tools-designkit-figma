@@ -9,8 +9,6 @@ import { importFromXML } from "./import";
 import { XMLBuilder } from "fast-xml-parser";
 import { SavedQuery } from "../model/SavedQuery";
 import { SystemForm } from "../model/SystemForm";
-
-import * as vscode from 'vscode';
 import { importJSONFiles } from "./Canvas/importers/json-importer";
 import { ScreenSaver } from "../model/Canvas/ScreenSaver";
 import { parseScreen } from "./Canvas/parsers/parser";
@@ -163,18 +161,3 @@ async function loadFonts() {
     style: 'Bold',
   });
 }
-// export function activate(context: vscode.ExtensionContext) {
-//   const handleUri = (uri: vscode.Uri) => {
-//     const queryParams = new URLSearchParams(uri.query);
-  
-//       if (queryParams.has('say')) {
-//         vscode.window.showInformationMessage(`URI Handler says: ${queryParams.get('say') as string}`);
-//       }
-//     };
-  
-//     context.subscriptions.push(
-//       vscode.window.registerUriHandler({
-//         handleUri
-//       })
-//     );
-// }
