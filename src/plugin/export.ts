@@ -99,17 +99,19 @@ export function exportOptionsToXML(collections: VariableCollection[]) {
 }
 
 export function exportEntitytoXML(savedquery: savedQuery) {
-  const headerNameNode = findNodeByName("[Header]");
-  
+  const headerNameNode = findNodeByName("[SavedQueryHeader]");
   const localizatedName = savedquery.LocalizedNames.LocalizedName;
   const localizednameValue = localizatedName[0]["@_description"];
   if(headerNameNode != undefined) {
     const headerCompProperties = (headerNameNode as InstanceNode).componentProperties;
-    const rowID = getPropertyValue(headerCompProperties,"Row id");
-
+    
     if(isParentNodeByPropertyValue(headerCompProperties,localizednameValue)) {
       const headerParent = headerNameNode.parent;
       const savedQueryParent = headerParent?.parent;
+      
+      const headerParentCompProperties = (headerParent as InstanceNode).componentProperties;
+      const rowID = getPropertyValue(headerParentCompProperties,"Row id");
+      console.info(rowID);
 
       if(savedQueryParent != undefined) {
         const gridNode = findNodeByNameAndParentID("[Grid]",savedQueryParent.id);
@@ -131,7 +133,6 @@ export function exportEntitytoXML(savedquery: savedQuery) {
               }
            });
            const rowIDValue = rowID != undefined ? rowID : "ntg_entityid";
-           
            const entityValue = rowIDValue.substring(0,rowIDValue.length - 2);
 
            const localizatedValues: FieldXmlFieldUIType[] = [];
