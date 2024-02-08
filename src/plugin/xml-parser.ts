@@ -31,7 +31,10 @@ export function nodeToXML(node: SceneNode,componentName: string) {
                 
                 groupNodes.forEach(node => {
                     const titleGroups: TitlesType_SiteMapTitle[] = [];
-                    const groupTitle = (findNodeByNameAndParentID("Title",node.id)as TextNode).characters;
+
+                    const groupNameNode = findNodeByNameAndParentID("[GroupName]",node.id);
+
+                    const groupTitle = (findNodeByNameAndParentID("Title",groupNameNode?.id)as TextNode).characters;
                     const idGroup = groupTitle.toLowerCase().replaceAll(" ","");
                     const titleGroupValue = new TitleValue("1033",groupTitle);
                     const subAreas: SiteMapTypeAreaGroupSubArea[] = [];
@@ -112,7 +115,7 @@ export function nodeToXML(node: SceneNode,componentName: string) {
                                     rowsNodes.forEach(row => {
                                         //var objects = (row as InstanceNode).componentProperties;
 
-                                        const cell = getCellbyFieldName(row.name,row.id,colNum,rowNum);
+                                        const cell = getCellbyFieldName(row.id,colNum,rowNum);
                                         if(cell != undefined) {
                                             const rowCell = new FormTypeTabsTabColumnSectionsSectionRowsRow(cell);
                                             rows.push(rowCell);
@@ -234,39 +237,12 @@ export function nodeToXML(node: SceneNode,componentName: string) {
     }
 }
 
-function getCellbyFieldName(name: string, nodeID: string,colNum: number, rowNum: number) {
+function getCellbyFieldName(nodeID: string,colNum: number, rowNum: number) {
     const labelsNode = findNodeByNameAndParentID("[Labels]",nodeID);
     if(labelsNode != null) {
         const cellLabel = (findNodeByNameAndParentID("[Label]",labelsNode.id)as TextNode).characters;
-        var classID = "";
+        const classID = (findNodeByNameAndParentID("[ClassID]",labelsNode.id)as TextNode).characters;
         
-        const type = name.substring(name.indexOf("["),name.indexOf("]")).substring(1);
-        switch(type) {
-            case "Text": {
-                classID = ControlTypes.SingleText;
-                break;
-            }
-            case "Number": {
-                classID = ControlTypes.Number;
-                break
-            }
-            case "DateTime": {
-                classID = ControlTypes.Date;
-                break
-            }
-            case "Choice": {
-                classID = ControlTypes.OptionSet;
-                break;
-            }
-            case "Autonumber": {
-                classID = ControlTypes.UniqueID;
-                break;
-            }
-            case "Lookup": {
-                classID = ControlTypes.Lookup;
-                break;
-            }
-        }
         const controlID = cellLabel.replace(' ','').toLowerCase();
         const control = new FormXmlControlType(controlID,classID,controlID,false);
         const label = new FormXmlLabelsTypeLabel(cellLabel,"1033");
