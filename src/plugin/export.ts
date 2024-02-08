@@ -99,7 +99,8 @@ export function exportOptionsToXML(collections: VariableCollection[]) {
 }
 
 export function exportEntitytoXML(savedquery: savedQuery) {
-  const headerNameNode = findNodeByName("[SavedQueryHeader]");
+  const headerNameNode = findNodeByName("[Header]");
+  
   const localizatedName = savedquery.LocalizedNames.LocalizedName;
   const localizednameValue = localizatedName[0]["@_description"];
   if(headerNameNode != undefined) {
@@ -130,6 +131,7 @@ export function exportEntitytoXML(savedquery: savedQuery) {
               }
            });
            const rowIDValue = rowID != undefined ? rowID : "ntg_entityid";
+           
            const entityValue = rowIDValue.substring(0,rowIDValue.length - 2);
 
            const localizatedValues: FieldXmlFieldUIType[] = [];
