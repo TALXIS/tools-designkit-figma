@@ -2,7 +2,6 @@ import { findNodeByNameAndParentID, findNodesByNameAndParentID, getPropertyValue
 import { SiteMap,SiteMapType, SiteMapTypeArea, SiteMapTypeAreaGroup, SiteMapTypeAreaGroupSubArea, TitleValue, TitlesType_SiteMapTitle } from "../model/SiteMap";
 import { FormType, FormTypeTabs, FormTypeTabsTab, FormTypeTabsTabColumn, FormTypeTabsTabColumnSections, FormTypeTabsTabColumnSectionsSection, FormTypeTabsTabColumnSectionsSectionRows, FormTypeTabsTabColumnSectionsSectionRowsRow, FormTypeTabsTabColumnSectionsSectionRowsRowCell, FormXmlControlType, FormXmlLabelsTypeLabel, SystemForm } from "../model/SystemForm";
 import { CustomAttribute, CustomOrder, FetchType, LocalizedName, SavedQuery, SavedqueryFetchxml, SavedqueryLayoutxml, SavedqueryLayoutxmlGrid, SavedqueryLayoutxmlGridRow, SavedqueryLayoutxmlGridRowCell, savedQuery } from "../model/SavedQuery";
-import { ControlTypes } from "../model/types/ControlTypes";
 
 import { Guid } from "typescript-guid";
 
@@ -195,41 +194,56 @@ export function nodeToXML(node: SceneNode,componentName: string) {
                     const savedQueryID = "{" + Guid.create() + "}";
 
                     if(gridNode != undefined) {
-                        const columnNodes = findNodesByNameAndParentID("[Column]",gridNode.id);
-                        const cells: SavedqueryLayoutxmlGridRowCell[] = [];
-                        const attributes: CustomAttribute[] = [];
-                        
-                        if(columnNodes != undefined) {
-                            columnNodes.forEach(columnNode => {
-                                const headerColumnNode = (columnNode as InstanceNode).children;
-                                const componentProperties = (headerColumnNode[0] as InstanceNode).componentProperties;
+                        const columnsNodes = findNodeByNameAndParentID("[Columns]",gridNode.id);
 
-                                const logicalName = getPropertyValue(componentProperties,"Logical name");
-                                if(logicalName != undefined) {
-                                    const cell = new SavedqueryLayoutxmlGridRowCell(logicalName,"100");
-                                    const attribute = new CustomAttribute(logicalName);
+                        if(columnsNodes != undefined) {
+                            const columnNodes = findNodesByNameAndParentID("[Column]",columnsNodes.id);
+                            const cells: SavedqueryLayoutxmlGridRowCell[] = [];
+                            const attributes: CustomAttribute[] = [];
+                            
+                            if(columnNodes != undefined) {
+                                columnNodes.forEach(columnNode => {
+                                    const columnHeaderNode = findNodeByNameAndParentID("[ColumnHeader]",columnNode.id);
+                                    
+                                    if(columnHeaderNode != undefined) {
+                                        const headerNode = findNodeByNameAndParentID("[Header]",columnHeaderNode.id);
+                                        
+                                        if(headerNode != undefined) {
+                                            const titleNode = findNodeByNameAndParentID("[Title]",headerNode.id);
+                                            const logicalnameNode = findNodeByNameAndParentID("[AttributeLogicalName]",headerNode.id);
+                                            
+                                            if(titleNode != undefined && logicalnameNode != undefined) {
+                                                const titleText = (titleNode as TextNode).characters;
+                                                const logicalText = (logicalnameNode as TextNode).characters;
 
-                                    cells.push(cell);
-                                    attributes.push(attribute);
-                                }
-                            });
+                                                const logicalName = logicalText == "ntg_name" ? titleText.toLowerCase().replaceAll(" ","_") : logicalText;
+                                                const cell = new SavedqueryLayoutxmlGridRowCell(logicalName,"100");
+                                                const attribute = new CustomAttribute(logicalName);
+            
+                                                cells.push(cell);
+                                                attributes.push(attribute);
+                                            }
+                                        }              
+                                    }
+                                });
+                            }
+                            const rowIDValue = rowID != undefined ? rowID : "ntg_entityid";
+                            const entityValue = rowIDValue.includes("id") ? rowIDValue.substring(0,rowIDValue.length - 2) : rowIDValue;
+                            const row = new SavedqueryLayoutxmlGridRow(rowIDValue,"result",cells);
+
+                            const grid = new SavedqueryLayoutxmlGrid("resultset","1","1","1",cells[0]["@_name"],row);
+                            const layoutxml = new SavedqueryLayoutxml(grid);
+
+                            const order = new CustomOrder(attributes[0]["@_name"],"false");
+                            const fetchType = new FetchType("1.0",entityValue,attributes,order);
+                            const fetchXML = new SavedqueryFetchxml(fetchType);
+
+                            const query = new savedQuery(savedQueryID.toString(),0,layoutxml,fetchXML,"1","0","1.0.0","0","0","0",localizatedNames);
+                            const output = new SavedQuery(query);
+                            console.info(output);
+
+                            return output;
                         }
-                        const rowIDValue = rowID != undefined ? rowID : "ntg_entityid";
-                        const entityValue = rowIDValue.substring(0,rowIDValue.length - 2);
-                        const row = new SavedqueryLayoutxmlGridRow(rowIDValue,"result",cells);
-
-                        const grid = new SavedqueryLayoutxmlGrid("resultset","1","1","1",cells[0]["@_name"],row);
-                        const layoutxml = new SavedqueryLayoutxml(grid);
-
-                        const order = new CustomOrder(attributes[0]["@_name"],"false");
-                        const fetchType = new FetchType("1.0",entityValue,attributes,order);
-                        const fetchXML = new SavedqueryFetchxml(fetchType);
-
-                        const query = new savedQuery(savedQueryID.toString(),0,layoutxml,fetchXML,"1","0","1.0.0","0","0","0",localizatedNames);
-                        const output = new SavedQuery(query);
-                        console.info(output);
-
-                        return output;
                     }
                 }
             }

@@ -17,19 +17,25 @@ export function exportToXML() {
     
     if(parentNode != undefined && parentNode.length >0) {
       const mapNodes = figma.currentPage.findAll(n => n.name.includes("["));
-
-      const ID = parentNode[0].id;
-      fillComponentNodes(mapNodes,ID,outputs);
+      fillComponentNodes(mapNodes,outputs);
     }
     return outputs;
   }
 
-  for (const selectedNode of selectedNodes){
-    const ID = selectedNode.id;
+  if(selectedNodes.length == 1) {
+    const nodeName = selectedNodes[0].name;
 
-    const mapNodes = figma.currentPage.findAll(n => n.name.includes("["));
-    fillComponentNodes(mapNodes, ID, outputs);
-  }
+    if(nodeName.includes("[")) {
+      var name = nodeName.split("]")[0].replace("[", "");
+
+      const output = findComponentToXML(name, selectedNodes[0]);
+      if (output != null) outputs.push(output);
+    } else {
+      const mapNodes = figma.currentPage.findAll(n => n.name.includes("["));
+      fillComponentNodes(mapNodes, outputs);
+    }
+  } 
+
   return outputs;
 }
 
@@ -99,67 +105,40 @@ export function exportOptionsToXML(collections: VariableCollection[]) {
 }
 
 export function exportEntitytoXML(savedquery: savedQuery) {
-  const headerNameNode = findNodeByName("[SavedQueryHeader]");
-  const localizatedName = savedquery.LocalizedNames.LocalizedName;
-  const localizednameValue = localizatedName[0]["@_description"];
-  if(headerNameNode != undefined) {
-    const headerCompProperties = (headerNameNode as InstanceNode).componentProperties;
-    
-    if(isParentNodeByPropertyValue(headerCompProperties,localizednameValue)) {
-      const headerParent = headerNameNode.parent;
-      const savedQueryParent = headerParent?.parent;
-      
-      const headerParentCompProperties = (headerParent as InstanceNode).componentProperties;
-      const rowID = getPropertyValue(headerParentCompProperties,"Row id");
-      console.info(rowID);
-
-      if(savedQueryParent != undefined) {
-        const gridNode = findNodeByNameAndParentID("[Grid]",savedQueryParent.id);
-        if(gridNode != undefined) {
-          const columnNodes = findNodesByNameAndParentID("[Column]",gridNode.id);
-          const attributes: EntityAttribute[] = [];
-          
-          if(columnNodes != undefined) {
-            columnNodes.forEach(columnNode => {
-              const headerColumnNode = (columnNode as InstanceNode).children;
-              const componentProperties = (headerColumnNode[0] as InstanceNode).componentProperties;
-
-              const displayName = getPropertyValue(componentProperties,"Header");
-              const logicalName = getPropertyValue(componentProperties,"Logical name");
-
-              if(displayName != undefined && logicalName != undefined) {
-                const attribute = new EntityAttribute(logicalName,logicalName,logicalName,"none",undefined,new DisplayNameParam(new AttributeDescription(displayName,"1033")));
-                attributes.push(attribute);
-              }
-           });
-           const rowIDValue = rowID != undefined ? rowID : "ntg_entityid";
-           const entityValue = rowIDValue.substring(0,rowIDValue.length - 2);
-
-           const localizatedValues: FieldXmlFieldUIType[] = [];
-           const descriptionValues: FieldXmlFieldUIType[] = [];
-
-           localizatedValues.push(new FieldXmlFieldUIType(localizednameValue,"1033"));
-           descriptionValues.push(new FieldXmlFieldUIType("","1033"));
-
-           const entityType = new EntityInfoTypeEntity(entityValue,localizatedValues,descriptionValues,attributes);
-           const entityInfo = new EntityInfoType(entityType);
-
-           const entity = new Entity(rowIDValue,entityInfo);
-           return entity;
-          }
-        }
-      }
-    }
+  const entity = savedquery.fetchxml.fetch.entity;
+  
+  const attributes: EntityAttribute[] = [];
+  if(Array.isArray(entity.attribute)) {
+    entity.attribute.forEach(attribute => {
+      const attr = new EntityAttribute(attribute["@_name"],attribute["@_name"],attribute["@_name"],"none",undefined,new DisplayNameParam(new AttributeDescription(attribute["@_name"],"1033")));
+      attributes.push(attr);
+    });
+  } else {
+    const attr = new EntityAttribute(entity.attribute["@_name"],entity.attribute["@_name"],entity.attribute["@_name"],"none",undefined,new DisplayNameParam(new AttributeDescription(entity.attribute["@_name"],"1033")));
+    attributes.push(attr);
   }
+  
+  const localizatedValues: FieldXmlFieldUIType[] = [];
+  const descriptionValues: FieldXmlFieldUIType[] = [];
+  
+  localizatedValues.push(new FieldXmlFieldUIType(savedquery.LocalizedNames.LocalizedName[0]["@_description"],"1033"));
+  descriptionValues.push(new FieldXmlFieldUIType("","1033"));
+  
+  const entityType = new EntityInfoTypeEntity(entity["@_name"],localizatedValues,descriptionValues,attributes);
+  const entityInfo = new EntityInfoType(entityType);
+  
+  const entityOutput = new Entity(entity["@_name"],entityInfo);
+  return entityOutput;
+
 }
 
-function fillComponentNodes(mapNodes: SceneNode[], ID: any, outputs: any[]) {
+function fillComponentNodes(mapNodes: SceneNode[], outputs: any[]) {
   for (let index = 0; index < mapNodes.length; index++) {
     const node = mapNodes[index];
 
     var name = node.name.split("]")[0].replace("[", "");
 
-    const output = findComponentToXML(name, node, ID);
+    const output = findComponentToXML(name, node);
     if (output != null) outputs.push(output);
   }
 }
@@ -174,9 +153,7 @@ function fillOptionSet(group: string, optionsTypeOptions: OptionstypeOption[], o
   optionSetTypes.push(optionType);
 }
 
-function findComponentToXML(name: string, node: SceneNode, ID: any) {
-  const hasSelected = getParent(node, ID);
-  if (hasSelected || node.id == ID) {
+function findComponentToXML(name: string, node: SceneNode) {
     switch (name) {
       case "SiteMap":
           return nodeToXML(node, "SiteMap");
@@ -187,7 +164,6 @@ function findComponentToXML(name: string, node: SceneNode, ID: any) {
         return nodeToXML(node,"SavedQuery");
       }
     }
-  }
   return null;
 }
 
