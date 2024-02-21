@@ -3,11 +3,13 @@ import { IAction, IAuthentication, IConnectionReference, IDefinition, IFlow, IHo
 export class Flow implements IFlow {
     name: string;
     id: string;
+    type: string;
     properties: IProperties;
     
     constructor(name: string, id: string, properties: Properties) {
-        this.name = name;
         this.id = id;
+        this.name = name;
+        this.type = "Microsoft.Flow/flows";
         this.properties = properties;
     }
 }
@@ -15,10 +17,10 @@ export class Flow implements IFlow {
 export class Properties implements IProperties {
     apiId: string;
     displayName: string;
-    definition: IDefinition;
+    definition: Definition;
     flowFailureAlertSubscribed: boolean;
     isManaged: boolean;
-    connectionReferences: IConnectionReference[];
+    connectionReferences: ConnectionReference[];
 
     constructor(apiId: string,displayName: string,definition: Definition,connectionReferences: ConnectionReference[]) {
         this.apiId = apiId;
@@ -33,16 +35,16 @@ export class Properties implements IProperties {
 
 export class Definition implements IDefinition {
     contentVersion: string;
-    actions: IAction[];
+    actions: Action[];
     
-    constructor(contentVersion: string,actions: Action[]) {
+    constructor(actions: Action[]) {
         this.contentVersion = "1.0.0.0";
         this.actions = actions;
     }
 }
 
 export class Action implements IAction {
-    item: IItem;
+    item: Item;
     
     constructor(item: Item) {
         this.item = item;
@@ -50,11 +52,13 @@ export class Action implements IAction {
 }
 
 export class Item implements IItem {
+    parent: string;
     type: string;
-    actions: IAction[] | undefined;
-    inputs: IInput[] | undefined;
+    actions: Action[] | undefined;
+    inputs: Input[] | undefined;
     
-    constructor(type: string, actions: Action[] | undefined, inputs: Input[] | undefined) {
+    constructor(parent: string,type: string, actions: Action[] | undefined, inputs: Input[] | undefined) {
+        this.parent = parent;
         this.type = type;
         this.actions = actions
         this.inputs = inputs;
@@ -62,11 +66,13 @@ export class Item implements IItem {
 }
 
 export class Input implements IInput {
-    host: IHost;
-    parameters: IParameter;
-    authentication: IAuthentication;
+    key: string;
+    host: Host;
+    parameters: Parameter;
+    authentication: Authentication;
 
-    constructor(host: Host, parameters: Parameter, authentication: Authentication) {
+    constructor(key:string,host: Host, parameters: Parameter, authentication: Authentication) {
+        this.key = key;
         this.host = host;
         this.parameters = parameters;
         this.authentication = authentication;
@@ -106,7 +112,7 @@ export class Authentication implements IAuthentication {
 }
 
 export class ConnectionReference implements IConnectionReference {
-    connnectionObject: IConnectionObject;
+    connnectionObject: ConnectionObject;
     
     constructor(connnectionObject: ConnectionObject) {
         this.connnectionObject = connnectionObject;
@@ -114,12 +120,14 @@ export class ConnectionReference implements IConnectionReference {
 }
 
 export class ConnectionObject implements IConnectionObject {
+    key: string;
     connectionName: string;
     source: string;
     id: string;
     tier: string;
     
-    constructor(connectionName: string,source: string,id: string,tier: string) {
+    constructor(key: string,connectionName: string,source: string,id: string,tier: string) {
+        this.key = key;
         this.connectionName = connectionName;
         this.id = id;
         this.source = source;

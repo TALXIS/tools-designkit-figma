@@ -2,6 +2,7 @@ export interface IFlow {
     name: string;
     id: string;
     properties: IProperties;
+    type: string;
 }
 
 export interface IProperties {
@@ -23,12 +24,14 @@ export interface IAction {
 }
 
 export interface IItem {
+    parent: string;
     type: string;
     actions: IAction[] | undefined;
     inputs: IInput[] | undefined;
 }
 
 export interface IInput {
+    key: string;
     host: IHost;
     parameters: IParameter;
     authentication: IAuthentication;
@@ -55,6 +58,7 @@ export interface IConnectionReference {
 }
 
 export interface IConnectionObject {
+    key: string;
     connectionName: string;
     source: string;
     id: string;

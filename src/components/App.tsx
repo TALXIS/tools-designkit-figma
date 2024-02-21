@@ -19,6 +19,12 @@ function App(props: PositioningProps) {
   const [value, setValue] = React.useState("json");
   const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
 
+  const flowPicker = useFilePicker({
+    accept: '.json',
+    onFilesSelected: ({ filesContent }) => {
+      parent.postMessage({ pluginMessage: { type: 'import-flow', filesContent } }, '*');
+    },
+  });
   const jsonPicker = useFilePicker({
     accept: '.json',
     onFilesSelected: ({ filesContent }) => {
@@ -172,7 +178,9 @@ function App(props: PositioningProps) {
         } else {
           setSelectedContent("jsoncontent");
         }
-      } else {
+      } else if(data.value == "flow") {
+        setSelectedContent("flow")
+      }else {
         setSelectedContent("export")
       }
   };
@@ -200,6 +208,15 @@ function App(props: PositioningProps) {
         <Title1 id='action'>ACTION</Title1>
         <Horizontal />
       </div>
+    </div>
+  ));
+
+  const FlowContent = React.memo(() => (
+    <div id='flowcontent'>
+      <Subtitle1 id='content'>Import definition.json file</Subtitle1>
+      <br />
+      <br />
+      <Button appearance="primary" id='files' onClick={() => flowPicker.openFilePicker()}>Add File</Button>
     </div>
   ));
 
@@ -266,12 +283,19 @@ function App(props: PositioningProps) {
         <Input appearance='outline' id={snippetId} />
         <br/>
         <Label htmlFor={pageId}>Page ID *</Label>
-        <Input appearance='outline' id={pageId} /> */}
+      <Input appearance='outline' id={pageId} /> */}
         <Label id='lbl2' size='medium'>Please select a Frame to be exported</Label>
         <br />
         <Button appearance="primary" onClick={() => onCreate("exportMD")}>SUBMIT</Button>
       </div>
     ));
+    const Flow = React.memo(() => (
+      <div id='flow' role="tabpanel" aria-labelledby="Flow">
+        <br/>
+        <FlowContent/>
+      </div>
+    ));
+
   
     return (
       <div id='upper'>
@@ -286,14 +310,17 @@ function App(props: PositioningProps) {
             {/* <Tab id='Import' value="import">Import</Tab> */}
             <Tab id='Canvas' value="canvas">Canvas</Tab>
             <Tab id='Export' value="export">Model Driven</Tab>
+            <Tab id='Flow' value="flow">Flow</Tab>
         </TabList>
 
         <div>
           {selectedValue === "canvas" && <Canvas />}
           {selectedValue === "export" && <Export />}
+          {selectedValue === "flow" && <Flow />}
         </div>
 
         <div>
+        {selectedContent === "flowcontent" && <FlowContent />}
         {selectedContent === "jsoncontent" && <JSONContent />}
         {selectedContent === "yamlcontent" && <YamlContent />}
         </div>

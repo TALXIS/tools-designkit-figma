@@ -25,12 +25,13 @@
     "react-tabs": "^6.0.2",
     "typescript-guid": "^1.0.3",
     "url-loader": "^4.1.1",
-    "xml-writer": "^1.7.0",
-    "use-file-picker": "^2.1.1"
+    "use-file-picker": "^2.1.1",
+    "xml-writer": "^1.7.0"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.79.0",
     "@types/file-saver": "^2.0.7",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.9.0",
     "@types/react-dom": "^18.2.14",
     "css-loader": "^6.8.1",

@@ -14,6 +14,7 @@ import { ScreenSaver } from "../model/Canvas/ScreenSaver";
 import { parseScreen } from "./Canvas/parsers/parser";
 import { importYAMLFiles } from "./Canvas/importers/yaml-importer";
 import { parseSelectedFrames } from "./Canvas/exporters/yaml-exporter";
+import { importDefinitionJSON } from "./PowerAutomate/importers/flowImporter";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 650);
@@ -139,7 +140,11 @@ figma.ui.onmessage = async msg => {
       });
     }
   });
- }
+  }
+
+  if(msg.type == "import-flow") {
+    importDefinitionJSON(msg.filesContent);
+  }
 };
 
 
