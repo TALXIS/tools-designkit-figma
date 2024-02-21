@@ -20,14 +20,14 @@ export interface IDefinition {
 }
 
 export interface IAction {
+    parent: string;
     item: IItem;
 }
 
 export interface IItem {
     parent: string;
     type: string;
-    actions: IAction[] | undefined;
-    inputs: IInput[] | undefined;
+    inputs: IInput | undefined;
 }
 
 export interface IInput {

@@ -146,32 +146,31 @@ figma.ui.onmessage = async msg => {
 
   if(msg.type == "import-flow") {
     importDefinitionJSON(msg.filesContent);
-    return;
   }
 
-  if(msg.type == "tempVac") {
-    (async() => {
-      await loadFonts();
-    })().then(() => {
-      makeCanvasTemplate(); 
-    });
-    return;
-  }
+if(msg.type == "tempVac") {
+  (async() => {
+    await loadFonts();
+  })().then(() => {
+    makeCanvasTemplate(); 
+  });
+  return;
+}
 
-  if(msg.type == "tempLeg") {
-    const importImage = msg.importPNG;
-    const redesignImage = msg.redesignPNG;
-    const exportImage = msg.exportPNG;
-    const moveImage = msg.movePNG;
-    
-    (async() => {
-      await loadFonts();
-    })().then(() => {
-      makeLegendInfo(importImage,redesignImage,exportImage,moveImage);   
-    });
-  }
+if(msg.type == "tempLeg") {
+  const importImage = msg.importPNG;
+  const redesignImage = msg.redesignPNG;
+  const exportImage = msg.exportPNG;
+  const moveImage = msg.movePNG;
+  
+  (async() => {
+    await loadFonts();
+  })().then(() => {
+    makeLegendInfo(importImage,redesignImage,exportImage,moveImage);   
+  });
+  
 };
-
+}
 
 async function loadFonts() {
   await figma.loadFontAsync({
