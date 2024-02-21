@@ -143,7 +143,8 @@ figma.ui.onmessage = async msg => {
   }
 
   if(msg.type == "import-flow") {
-    importDefinitionJSON(msg.filesContent);
+    const flow = importDefinitionJSON(msg.filesContent);
+    console.info(flow);
   }
 };
 

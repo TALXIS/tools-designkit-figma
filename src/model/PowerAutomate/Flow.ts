@@ -44,9 +44,11 @@ export class Definition implements IDefinition {
 }
 
 export class Action implements IAction {
+    parent: string;
     item: Item;
     
-    constructor(item: Item) {
+    constructor(parent: string,item: Item) {
+        this.parent = parent;
         this.item = item;
     }
 }
@@ -54,13 +56,11 @@ export class Action implements IAction {
 export class Item implements IItem {
     parent: string;
     type: string;
-    actions: Action[] | undefined;
-    inputs: Input[] | undefined;
+    inputs: Input | undefined;
     
-    constructor(parent: string,type: string, actions: Action[] | undefined, inputs: Input[] | undefined) {
+    constructor(parent: string,type: string, inputs: Input | undefined) {
         this.parent = parent;
         this.type = type;
-        this.actions = actions
         this.inputs = inputs;
     }
 }
