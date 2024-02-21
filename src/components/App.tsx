@@ -9,6 +9,11 @@ import { saveAs } from 'file-saver';
 import { useFilePicker } from 'use-file-picker';
 
 const logo: string = require("../assets/Logo.png").default;
+const vacation: string = require("../assets/vacation.png").default;
+const importPNG: string = require("../assets/import.png").default;
+const redesignPNG: string = require("../assets/redesign.png").default;
+const exportPNG: string = require("../assets/export.png").default;
+const movePNG: string = require("../assets/move.png").default;
 
 function App(props: PositioningProps) {
   const snippetId = useId("input-snippet");
@@ -18,6 +23,7 @@ function App(props: PositioningProps) {
 
   const [value, setValue] = React.useState("json");
   const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
+  const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
 
   const flowPicker = useFilePicker({
     accept: '.json',
@@ -166,6 +172,7 @@ function App(props: PositioningProps) {
   const onCreate = (type: string) => {
     if (type == "exportYaml") parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
     if(type == "tempVac") parent.postMessage({ pluginMessage: { type: 'tempVac' } }, '*');
+    if(type == "tempLeg") parent.postMessage({ pluginMessage: { type: 'tempLeg',importPNG, redesignPNG,exportPNG,movePNG } }, '*');
 
     if(type == "exportMD") parent.postMessage({ pluginMessage: { type: 'export-xml' } }, '*');
   };
@@ -173,14 +180,20 @@ function App(props: PositioningProps) {
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
       setSelectedValue(data.value);
       if (data.value == "canvas") {
+        setSelectedHelperContent("");
         if (value == "yaml") {
           setSelectedContent("yamlcontent")
         } else {
           setSelectedContent("jsoncontent");
         }
       } else if(data.value == "flow") {
+        setSelectedHelperContent("");
         setSelectedContent("flow")
-      }else {
+      } else if (data.value == "helper") {
+        setSelectedContent("");
+        setSelectedHelperContent("template");
+      } else {
+        setSelectedHelperContent("");
         setSelectedContent("export")
       }
   };
@@ -208,6 +221,25 @@ function App(props: PositioningProps) {
         <Title1 id='action'>ACTION</Title1>
         <Horizontal />
       </div>
+    </div>
+  ));
+
+  const Helper = React.memo(() => (
+    <div id='helper' role="tabpanel" aria-labelledby="Helper">
+      <div id='action' className='header'>
+      </div>
+    </div>
+  ));
+
+  const TemplateContent = React.memo(() => (
+    <div id='template'>
+      <Subtitle1 id='content2'>Canvas Template - Vacation</Subtitle1>
+      <Image id='logo' className='img2' src={vacation} height={140} width={235} />
+      <Button appearance="primary" onClick={() => onCreate("tempVac")}>Select</Button>
+      <br />
+      <Subtitle1 id='content2'>How to Use</Subtitle1>
+      <Subtitle1 id='dscr2'>Click and see functionality<br/> of the plugin</Subtitle1>
+      <Button appearance="primary" id='submit' onClick={() => onCreate("tempLeg")}>Select</Button>
     </div>
   ));
 
@@ -311,18 +343,24 @@ function App(props: PositioningProps) {
             <Tab id='Canvas' value="canvas">Canvas</Tab>
             <Tab id='Export' value="export">Model Driven</Tab>
             <Tab id='Flow' value="flow">Flow</Tab>
+            <Tab id='Helper' value="helper">Helper</Tab>
         </TabList>
 
         <div>
           {selectedValue === "canvas" && <Canvas />}
           {selectedValue === "export" && <Export />}
           {selectedValue === "flow" && <Flow />}
+          {selectedValue === "helper" && <Helper />}
         </div>
 
         <div>
         {selectedContent === "flowcontent" && <FlowContent />}
         {selectedContent === "jsoncontent" && <JSONContent />}
         {selectedContent === "yamlcontent" && <YamlContent />}
+        </div>
+
+        <div>
+          {selectedHelperContent === "template" && <TemplateContent />}
         </div>
 
         <div id='footer'>

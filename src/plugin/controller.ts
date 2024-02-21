@@ -15,6 +15,8 @@ import { parseScreen } from "./Canvas/parsers/parser";
 import { importYAMLFiles } from "./Canvas/importers/yaml-importer";
 import { parseSelectedFrames } from "./Canvas/exporters/yaml-exporter";
 import { importDefinitionJSON } from "./PowerAutomate/importers/flowImporter";
+import { makeCanvasTemplate } from "./Canvas/importers/canvas-importer";
+import { makeLegendInfo } from "./Canvas/importers/legend-importer";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 650);
@@ -144,6 +146,29 @@ figma.ui.onmessage = async msg => {
 
   if(msg.type == "import-flow") {
     importDefinitionJSON(msg.filesContent);
+    return;
+  }
+
+  if(msg.type == "tempVac") {
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      makeCanvasTemplate(); 
+    });
+    return;
+  }
+
+  if(msg.type == "tempLeg") {
+    const importImage = msg.importPNG;
+    const redesignImage = msg.redesignPNG;
+    const exportImage = msg.exportPNG;
+    const moveImage = msg.movePNG;
+    
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      makeLegendInfo(importImage,redesignImage,exportImage,moveImage);   
+    });
   }
 };
 
