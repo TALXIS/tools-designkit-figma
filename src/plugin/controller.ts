@@ -17,6 +17,7 @@ import { parseSelectedFrames } from "./Canvas/exporters/yaml-exporter";
 import { importDefinitionJSON } from "./PowerAutomate/importers/flowImporter";
 import { makeCanvasTemplate } from "./Canvas/importers/canvas-importer";
 import { makeLegendInfo } from "./Canvas/importers/legend-importer";
+import { parseFlow } from "./PowerAutomate/parsers/flowParser";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 650);
@@ -147,6 +148,13 @@ figma.ui.onmessage = async msg => {
   if(msg.type == "import-flow") {
     const flow = importDefinitionJSON(msg.filesContent);
     console.info(flow);
+    if(flow != undefined) {
+      (async() => {
+        await loadFonts();
+      })().then(() => {
+        parseFlow(flow);
+      });
+    }
   }
 
 if(msg.type == "tempVac") {

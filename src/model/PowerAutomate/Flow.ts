@@ -4,7 +4,7 @@ export class Flow implements IFlow {
     name: string;
     id: string;
     type: string;
-    properties: IProperties;
+    properties: Properties;
     
     constructor(name: string, id: string, properties: Properties) {
         this.id = id;
