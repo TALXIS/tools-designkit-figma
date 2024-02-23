@@ -27,7 +27,7 @@ export interface IAction {
 export interface IItem {
     parent: string;
     type: string;
-    inputs: IInput | undefined;
+    inputs: IInput | undefined | string;
 }
 
 export interface IInput {

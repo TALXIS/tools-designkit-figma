@@ -1,3 +1,4 @@
+import exp from "constants";
 import { Action, Authentication, ConnectionObject, ConnectionReference, Definition, Flow, Host, Input, Item, Parameter, Properties } from "../../../model/PowerAutomate/Flow";
 
 export function importDefinitionJSON(files: any[]) {
@@ -49,7 +50,10 @@ export function importDefinitionJSON(files: any[]) {
             
             fillActions("",undefined,defActions,actions);
         } 
-        const def = new Definition(defActions);
+
+        const outputActions = repairActions(defActions);
+
+        const def = new Definition(outputActions);
 
         const connectionReferences: ConnectionReference[] = [];
 
@@ -94,21 +98,32 @@ function fillActions(parent: string,val: any | undefined, defActions: Action[], 
             }
             
             const act = (actval as any).actions;
-            const defItem = new Item(actkey,type,undefined);
+            const expression = (actval as any).expression;
+            
+            var exp = undefined;
+            if(expression != undefined) {
+                const actValues = Object.values(expression);
+                exp = (actValues[0] as string[])[0];
+            }
+            const defItem = new Item(actkey,type,exp != undefined ? exp : inp);
             const defAction = new Action(parent,defItem);
             defActions.push(defAction);
 
             const subActions: Action[] = [];
             fillActions(actkey,actval,subActions,act);
-            
+ 
             subActions.forEach(element => {
                 defActions.push(element);
             });
         }
 
     } else {
+        var inp = undefined;
+        if(val != undefined){
+            inp = val.inputs;
+        }    
         const tp = val.type;
-        const defItem = new Item(parent,tp,undefined);
+        const defItem = new Item(parent,tp,inp);
         const defAction = new Action(parent,defItem);
         defActions.push(defAction);
     }  
@@ -133,5 +148,32 @@ function fillConnectionRefs(connectionReferences: any, refs: ConnectionReference
             refs.push(res);
         }
     }
+}
+
+function repairActions(defActions: Action[]) {
+    var lastAction = undefined;
+    const outputActions : Action[] = [];
+
+    for (let index = 0; index < defActions.length; index++) {
+        const element = defActions[index];
+        if(lastAction == undefined) {
+            lastAction = element;
+            outputActions.push(element);
+            continue;
+        }
+
+        if(lastAction.item.type === element.parent) {
+            lastAction.item.inputs = element.item.inputs;
+            outputActions.pop();
+            outputActions.push(lastAction);
+            lastAction = element;
+            continue;
+        } else {
+            outputActions.push(element);
+            lastAction = element;
+        }
+
+    }
+    return outputActions;
 }
 

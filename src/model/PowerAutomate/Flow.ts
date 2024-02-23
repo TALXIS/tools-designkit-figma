@@ -56,9 +56,9 @@ export class Action implements IAction {
 export class Item implements IItem {
     parent: string;
     type: string;
-    inputs: Input | undefined;
+    inputs: Input | undefined | string;
     
-    constructor(parent: string,type: string, inputs: Input | undefined) {
+    constructor(parent: string,type: string, inputs: Input | undefined | string) {
         this.parent = parent;
         this.type = type;
         this.inputs = inputs;
