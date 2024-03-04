@@ -3,6 +3,7 @@ import { ScreenSaver } from '../../../model/Canvas/ScreenSaver';
 import { findLastX, findPropertyValueFromScreens, findPropertyValuebyName, getValue, showIcon } from '../../../util/utils';
 import { getFontName } from '../importers/font-importer';
 import {hexToRGBA, hexToRgb, invertColor, rgbToHex, rgbaToRgb, rgbaToRgbWithOpacity, shadeColor,threeHexToRGB} from '../../../util/colorUtil';
+import { Properties } from '../../../model/PowerAutomate/Flow';
 
 var screenVal: Screen;
 var saver: ScreenSaver;
@@ -474,8 +475,9 @@ function addFormsChild(forms: Form[] | undefined, frame: FrameNode) {
                 return item.key == "Height";
             });
             
-            if(y != undefined && height != undefined) {
-                const yValue = y.value.includes("=") ? y.value.split("=")[1].replace("'",""): y.value;
+            if(height != undefined) {
+                const yOutput = y != undefined ? y : new Props("Y","0");
+                const yValue = yOutput.value.includes("=") ? yOutput.value.split("=")[1].replace("'",""): yOutput;
                 const heightValue = height.value.includes("=") ? height.value.split("=")[1].replace("'",""): height.value;
                 
                 if(form.type == "gallery" || form.type == "formViewer") {
@@ -636,11 +638,15 @@ function addRectangleProps(properties: Props[], rectangle: RectangleNode) {
             }
         }
     });
-    if(h == 0) {
+    if(h == 0 && w > 0) {
         rectangle.resize(w,80);
-    } else if(w == 0) {
+    } else if(w == 0 && h > 0) {
         rectangle.resize(120,h);
-    } else rectangle.resize(w,h);
+    } else if(h > 0 && w > 0){
+        rectangle.resize(w,h);
+    } else {
+        rectangle.resize(120,80);
+    }
 
     if(rectFill != "") {
         var rgba = rectFill;
