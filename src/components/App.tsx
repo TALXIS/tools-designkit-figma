@@ -1,14 +1,12 @@
 import React from 'react';
 import '../styles/ui.css';
-import { useId, Button,PositioningProps, Subtitle1,Image,Label,Input,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Table, 
-  TableBody, TableRow, TableCell, Checkbox, Title1,RadioGroup,Radio,RadioGroupOnChangeData } from '@fluentui/react-components';
+import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,RadioGroup,Radio,RadioGroupOnChangeData } from '@fluentui/react-components';
 
-import type { CheckboxProps } from "@fluentui/react-components";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { useFilePicker } from 'use-file-picker';
 
-const logo: string = require("../assets/Logo.png").default;
+const logo: string = require("../assets/logo.png").default;
 const vacation: string = require("../assets/vacation.png").default;
 const importPNG: string = require("../assets/import.png").default;
 const redesignPNG: string = require("../assets/redesign.png").default;
@@ -16,19 +14,24 @@ const exportPNG: string = require("../assets/export.png").default;
 const movePNG: string = require("../assets/move.png").default;
 
 function App(props: PositioningProps) {
-  const snippetId = useId("input-snippet");
-  const pageId = useId("input-page");
 
   const [selectedValue, setSelectedValue] = React.useState<TabValue>("canvas");
 
   const [value, setValue] = React.useState("json");
   const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
+  const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
 
   const flowPicker = useFilePicker({
     accept: '.json',
     onFilesSelected: ({ filesContent }) => {
       parent.postMessage({ pluginMessage: { type: 'import-flow', filesContent } }, '*');
+    },
+  });
+  const drivenPicker = useFilePicker({
+    accept: '.xml',
+    onFilesSelected: ({ filesContent }) => {
+      parent.postMessage({ pluginMessage: { type: 'import-xml', filesContent } }, '*');
     },
   });
   const jsonPicker = useFilePicker({
@@ -75,106 +78,15 @@ function App(props: PositioningProps) {
           }
           return;
         }
-
-
-        if(data.pluginMessage.type == "png") {
-          fetch(data.pluginMessage.url)
-            .then(response => response.blob())
-            .then(blob => {
-              const link = document.createElement("a");
-              link.href = URL.createObjectURL(blob);
-              link.download = "export.png";
-              link.click();
-              URL.revokeObjectURL(link.href);
-          })
-          return;
-        }
-        let xmls = data.pluginMessage.xml;
-  
-        if(xmls.length == 1) {
-          const xml = xmls[0];
-          const file = new Blob([xml.file], { type: 'application/xml' });
-          let link = document.createElement('a');
-          link.target = '_blank';
-          link.href = window.URL.createObjectURL(file);
-          
-          link.setAttribute("download", xml.name);
-          link.click();
-          URL.revokeObjectURL(link.href);
-        } else {
-          var zip = new JSZip();
-          for (let i = 0; i < xmls.length; i++) {
-            const xml = xmls[i];
-            const file = new Blob([xml.file], { type: 'application/xml' });
-    
-            zip.file(xml.name.concat(".xml"),file);
-          }
-          zip.generateAsync({type:"blob"}).then(function(content) {
-            saveAs(content,"exported.zip");
-          });
-        }
       }
-
     }
   });
 
-  const Checked = () => {
-    const [checked, setChecked] = React.useState<CheckboxProps["checked"]>(true);
-    return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => setChecked(data.checked)}
-        label="Start"
-      />
-    );
-  };
-  const Checked1 = () => {
-    const [checked, setChecked] = React.useState<CheckboxProps["checked"]>(true);
-    return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => setChecked(data.checked)}
-        label="Obchod"
-      />
-    );
-  };
-  const Checked2 = () => {
-    const [checked, setChecked] = React.useState<CheckboxProps["checked"]>(true);
-    return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => setChecked(data.checked)}
-        label="Smlouvy"
-      />
-    );
-  };
-  const Checked3 = () => {
-    const [checked, setChecked] = React.useState<CheckboxProps["checked"]>(true);
-    return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => setChecked(data.checked)}
-        label="Real Estate"
-      />
-    );
-  };
-  const Checked4 = () => {
-    const [checked, setChecked] = React.useState<CheckboxProps["checked"]>(true);
-    return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => setChecked(data.checked)}
-        label="Telefonní systém"
-      />
-    );
-  };
 
   const onCreate = (type: string) => {
     if (type == "exportYaml") parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
     if(type == "tempVac") parent.postMessage({ pluginMessage: { type: 'tempVac' } }, '*');
     if(type == "tempLeg") parent.postMessage({ pluginMessage: { type: 'tempLeg',importPNG, redesignPNG,exportPNG,movePNG } }, '*');
-
-    if(type == "exportMD") parent.postMessage({ pluginMessage: { type: 'export-xml' } }, '*');
   };
 
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
@@ -193,8 +105,9 @@ function App(props: PositioningProps) {
         setSelectedContent("");
         setSelectedHelperContent("template");
       } else {
+        setSelectedContent("");
         setSelectedHelperContent("");
-        setSelectedContent("export")
+        setSelectedDrivenContent("driven")
       }
   };
 
@@ -221,6 +134,13 @@ function App(props: PositioningProps) {
         <Title1 id='action'>ACTION</Title1>
         <Horizontal />
       </div>
+    </div>
+  ));
+
+  const Driven = React.memo(() => (
+    <div id='flow' role="tabpanel" aria-labelledby="Model Driven">
+      <br/>
+      <XMLContent/>
     </div>
   ));
 
@@ -277,50 +197,14 @@ function App(props: PositioningProps) {
     </div>
   ));
 
-  const Import = React.memo(() => (
-      <div id='imp' role="tabpanel" aria-labelledby="Import">
-         <Label htmlFor={snippetId}>Snippet link *</Label>
-        <Input appearance='outline' id={snippetId} />
-        <br/>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-               <Label htmlFor={pageId}>Workspace code *</Label>
-                <Input appearance='outline' id={pageId} />
-              </TableCell>
-              <TableCell>
-               <Label htmlFor={pageId}>Customer logo</Label>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-          </Table>
-        <br />
-        <Label htmlFor={pageId}>Customer colours *</Label>
-        <Label htmlFor={pageId}>Modules *</Label>
-
-        <Checked />
-        <Checked1 />
-        <Checked2 />
-        <Checked3 />
-        <Checked4 />
-        <br />
-        <Button appearance="primary" onClick={() => onCreate("importMD")}>SUBMIT</Button>
-      </div>
-    ));
-
-    const Export = React.memo(() => (
-      <div id='exp' role="tabpanel" aria-labelledby="Export">
-        {/* <Label htmlFor={snippetId}>Snippet link *</Label>
-        <Input appearance='outline' id={snippetId} />
-        <br/>
-        <Label htmlFor={pageId}>Page ID *</Label>
-      <Input appearance='outline' id={pageId} /> */}
-        <Label id='lbl2' size='medium'>Please select a Frame to be exported</Label>
-        <br />
-        <Button appearance="primary" onClick={() => onCreate("exportMD")}>SUBMIT</Button>
-      </div>
-    ));
+  const XMLContent = React.memo(() => (
+    <div id='xmlcontent'>
+      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
+      <br />
+      <br />
+      <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File(s)</Button>
+    </div>
+  ));
     const Flow = React.memo(() => (
       <div id='flow' role="tabpanel" aria-labelledby="Flow">
         <br/>
@@ -339,16 +223,15 @@ function App(props: PositioningProps) {
         </div>
         <br/>
         <TabList id='tab' defaultSelectedValue="Canvas" selectedValue={selectedValue} onTabSelect={onTabSelect}>
-            {/* <Tab id='Import' value="import">Import</Tab> */}
             <Tab id='Canvas' value="canvas">Canvas</Tab>
-            <Tab id='Export' value="export">Model Driven</Tab>
+            <Tab id='Driven' value="driven">Model Driven</Tab>
             <Tab id='Flow' value="flow">Flow</Tab>
             <Tab id='Helper' value="helper">Helper</Tab>
         </TabList>
 
         <div>
           {selectedValue === "canvas" && <Canvas />}
-          {selectedValue === "export" && <Export />}
+          {selectedValue === "driven" && <Driven />}
           {selectedValue === "flow" && <Flow />}
           {selectedValue === "helper" && <Helper />}
         </div>
@@ -357,6 +240,7 @@ function App(props: PositioningProps) {
         {selectedContent === "flowcontent" && <FlowContent />}
         {selectedContent === "jsoncontent" && <JSONContent />}
         {selectedContent === "yamlcontent" && <YamlContent />}
+        {selectedDrivenContent === "xmlcontent" && <XMLContent />}
         </div>
 
         <div>
@@ -365,7 +249,7 @@ function App(props: PositioningProps) {
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 0.2</Subtitle1>
+          <Subtitle1 id='footerText2'>version 0.3</Subtitle1>
         </div>
     </div>
     );

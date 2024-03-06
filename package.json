@@ -13,6 +13,8 @@
   "dependencies": {
     "@fluentui/react-components": "^9.35.1",
     "@types/node": "^20.9.0",
+    "assert": "^2.1.0",
+    "css-loader": "^6.8.1",  
     "fast-xml-parser": "^4.3.2",
     "figma-api": "^1.11.0",
     "file-saver": "^2.0.5",
@@ -20,12 +22,16 @@
     "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "react": "^18.2.0",
+    "stream": "^0.0.2",
+    "buffer": "^6.0.3",
+    "base-64": "^1.0.0",
     "react-dev-utils": "^12.0.1",
     "react-dom": "^18.2.0",
     "react-tabs": "^6.0.2",
     "typescript-guid": "^1.0.3",
     "url-loader": "^4.1.1",
     "use-file-picker": "^2.1.1",
+    "xml-js": "^1.6.11",
     "xml-writer": "^1.7.0"
   },
   "devDependencies": {
