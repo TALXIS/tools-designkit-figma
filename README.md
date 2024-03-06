@@ -33,9 +33,8 @@ If wish to use this project for your team, please get in touch with us at info@m
 ## ⚡️ Roadmap
 - [x] Add Import/Export for the Canvas Apps
 - [x] Add Helper screen - Canvas templates
-- [x] Pre-prepared Design system for Power Platform apps
-- [ ] Import of Power Automate
-- [ ] Add Helper screen - Model Driven template
+- [x] Import Model Driven app
+- [x] Import of Power Automate
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
