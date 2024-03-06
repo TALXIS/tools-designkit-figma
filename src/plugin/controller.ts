@@ -11,7 +11,7 @@ import { parseModelDrivenScreen } from "./ModelDriven/parsers/modelDrivenParser"
 import { importXMLFiles } from "./ModelDriven/importers/xml-importer";
 
 figma.showUI(__html__);
-figma.ui.resize(400, 650);
+figma.ui.resize(400, 610);
 
 
 figma.ui.onmessage = async msg => {

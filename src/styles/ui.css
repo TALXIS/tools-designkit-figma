@@ -20,6 +20,23 @@ body {
   padding-top: 10px;
 }
 
+#heading {
+  color: #6776E3;
+  font-family: sans-serif;
+  font-size: 19px;
+  text-align: left;
+  width: 40%;
+  padding-bottom: 5px;
+}
+
+#subheading {
+  color: #A4ABBD;
+  font-family: sans-serif;
+  font-size: 15px;
+  width: 70%;
+  text-align: left;
+}
+
 #action {
   font-size: 19px;
   font-family: sans-serif;
@@ -57,12 +74,14 @@ body {
 }
 .middle {
   padding-top: 20px;
+  padding-left: 50px;
   display: grid;
-  justify-content: center;
+  justify-content: left;
 }
 
 .img {
-  padding-left: 120px;
+  position: absolute;
+  padding-left: 65%;
 }
 
 #lbl {
@@ -132,9 +151,11 @@ body {
   font-size: 19px;
   font-family: sans-serif;
   font-weight: 200;
+  color: #6F7480;
 }
 #footerText2 {
   font-size: 13px;
   font-family: sans-serif;
   font-weight: 200;
+  color: #6F7480;
 }

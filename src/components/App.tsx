@@ -13,6 +13,7 @@ const redesignPNG: string = require("../assets/redesign.png").default;
 const exportPNG: string = require("../assets/export.png").default;
 const movePNG: string = require("../assets/move.png").default;
 
+
 function App(props: PositioningProps) {
 
   const [selectedValue, setSelectedValue] = React.useState<TabValue>("canvas");
@@ -165,7 +166,7 @@ function App(props: PositioningProps) {
 
   const FlowContent = React.memo(() => (
     <div id='flowcontent'>
-      <Subtitle1 id='content'>Import definition.json file</Subtitle1>
+      <Subtitle1 id='content'>Import "definition.json" file</Subtitle1>
       <br />
       <br />
       <Button appearance="primary" id='files' onClick={() => flowPicker.openFilePicker()}>Add File</Button>
@@ -199,10 +200,10 @@ function App(props: PositioningProps) {
 
   const XMLContent = React.memo(() => (
     <div id='xmlcontent'>
-      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
+      <Subtitle1 id='content'>Import the "customization.xml" File</Subtitle1>
       <br />
       <br />
-      <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File(s)</Button>
+      <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File</Button>
     </div>
   ));
     const Flow = React.memo(() => (
@@ -216,13 +217,12 @@ function App(props: PositioningProps) {
     return (
       <div id='upper'>
         <div className='middle'>
+        <Label id='heading' size='medium'>DesignKit</Label>
           <Image className='img' src={logo} height={50} />  
-          <br/>
-          <br/>
-          <Label id='lbl' size='medium'>Make a Customer design by one click</Label>
+          <Label id='subheading' size='medium'>move your Power Apps development on the new level</Label>
         </div>
         <br/>
-        <TabList id='tab' defaultSelectedValue="Canvas" selectedValue={selectedValue} onTabSelect={onTabSelect}>
+        <TabList id='tab' defaultSelectedValue="Canvas" selectedValue={selectedValue} onTabSelect={onTabSelect} >
             <Tab id='Canvas' value="canvas">Canvas</Tab>
             <Tab id='Driven' value="driven">Model Driven</Tab>
             <Tab id='Flow' value="flow">Flow</Tab>
@@ -256,3 +256,4 @@ function App(props: PositioningProps) {
   }
   
 export default App;
+
