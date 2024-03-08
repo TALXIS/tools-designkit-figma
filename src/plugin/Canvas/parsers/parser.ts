@@ -3,7 +3,6 @@ import { ScreenSaver } from '../../../model/Canvas/ScreenSaver';
 import { findLastX, findPropertyValueFromScreens, findPropertyValuebyName, getValue, showIcon } from '../../../util/utils';
 import { getFontName } from '../importers/font-importer';
 import {hexToRGBA, hexToRgb, invertColor, rgbToHex, rgbaToRgb, rgbaToRgbWithOpacity, shadeColor,threeHexToRGB} from '../../../util/colorUtil';
-import { Properties } from '../../../model/PowerAutomate/Flow';
 
 var screenVal: Screen;
 var saver: ScreenSaver;

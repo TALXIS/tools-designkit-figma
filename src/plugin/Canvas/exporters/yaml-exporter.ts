@@ -136,7 +136,10 @@ async function fillElementToData(fieldSpace:string,childSpace:string,data: strin
             data.push(fieldSpace.concat(name.concat(' As htmlViewer:')));
             const radius = (element as RectangleNode).cornerRadius;
             var hex = "";
+            var borderHex = "";
             var backText = "background-color";
+            var borderText = "border-style:solid;border-color:"
+            
             
             if(fills[0].type === "SOLID") {
                 hex = rgbToHex(Math.round(fills[0].color.r*255),Math.round(fills[0].color.g*255),Math.round(fills[0].color.b*255));
@@ -145,8 +148,12 @@ async function fillElementToData(fieldSpace:string,childSpace:string,data: strin
                 backText = "background";
                 hex = getBackgroundFromGradient(fills[0].gradientStops); 
             }
+            if(strokes.length > 0 && strokes[0].type === "SOLID") {
+                borderHex = rgbToHex(Math.round(strokes[0].color.r*255),Math.round(strokes[0].color.g*255),Math.round(strokes[0].color.b*255))
+            }
             const backcolor = hex == "" ? "#ffffff" : hex;
-            data.push(childSpace+'HtmlText: |- \n '+childSpace+'=" <div style=' + "'border-radius:"+radius.toString()+"px;"+backText+":"+ backcolor +";width:"+ String(Math.round(element.width)) +"px;height:"+String(Math.round(element.height))+"px;'></div>" + '"');
+            const border = borderHex == "" ? "" : borderText + borderHex + ";";
+            data.push(childSpace+'HtmlText: |- \n '+childSpace+'=" <div style=' + "'border-radius:"+radius.toString()+"px;"+backText+":"+ backcolor +";width:"+ String(Math.round(element.width)) +"px;height:"+String(Math.round(element.height))+"px;"+border+"'></div>" + '"');
             fillDataProperties(childSpace,data,element,index,25,15,extraYValue);
             break;
         }
