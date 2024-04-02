@@ -35,6 +35,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Add Helper screen - Canvas templates
 - [x] Import Model Driven app
 - [x] Import of Power Automate
+- [ ] New UI for Power Automate Flow (after the Easter holiday)
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
