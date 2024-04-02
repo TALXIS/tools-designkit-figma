@@ -72,7 +72,6 @@ figma.ui.onmessage = async msg => {
 
   if(msg.type == "import-flow") {
     const flow = importDefinitionJSON(msg.filesContent);
-    console.info(flow);
     if(flow != undefined) {
       (async() => {
         await loadFonts();
@@ -122,5 +121,9 @@ async function loadFonts() {
   await figma.loadFontAsync({
     family: "Poppins",
     style: 'Bold',
+  });
+  await figma.loadFontAsync({
+    family: "Outfit",
+    style: 'Regular',
   });
 }
