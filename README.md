@@ -36,7 +36,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Import Model Driven app
 - [x] Import of Power Automate
 - [x] New UI for Power Automate Flow (after the Easter holiday)
-- [ ] Import own JSON data for Model Driven Grid
+- [x] Import own JSON data for Model Driven Grid
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
