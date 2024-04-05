@@ -1,9 +1,10 @@
 import { ModelDrivenScreen} from "../../../model/ModelDrivenScreen";
 import { findLastX, showIcon } from "../../../util/utils";
-import { addArea, addHeader, addIconRows, addItem, addMenuItem, addNavigationContent, addTextRows } from "../importers/driven-importer";
+import { addArea, addHeader, addIconRows, addItem, addMenuItem, addNavigationContent, addTextFromGridRows, addTextRows } from "../importers/driven-importer";
 import {hexToRGBA, hexToRgb} from '../../../util/colorUtil';
 import { SiteMap, SiteMapTypeAreaGroup } from "../../../model/SiteMap";
 import { CustomAttribute, FetchType, SavedQuery, SavedqueryLayoutxmlGrid, savedQuery } from "../../../model/SavedQuery";
+import { Grid } from "../../../model/Grid";
 
 export function parseModelDrivenScreen(modelDrivenScreen: ModelDrivenScreen) {
     const background = hexToRgb("#FFFFFF");
@@ -42,6 +43,26 @@ export function parseModelDrivenScreen(modelDrivenScreen: ModelDrivenScreen) {
     pageContent.layoutSizingVertical = "HUG";
 
     frame.layoutSizingVertical = "HUG";
+}
+
+export function parseGrid(grid: Grid) {
+    const background = hexToRgb("#FFFFFF");
+    const textColor = hexToRgb("#000000");
+
+    const contentFrame = figma.createFrame();
+    contentFrame.name = "Table Frame";
+    contentFrame.x = findLastX();
+    contentFrame.y = 0;
+    contentFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    contentFrame.layoutMode = 'HORIZONTAL';
+    contentFrame.counterAxisAlignItems = 'MIN';
+    contentFrame.paddingLeft = 20;
+    contentFrame.paddingRight = 20;
+
+    addColumnsFromGrid(contentFrame,background,textColor,grid);
+
+    contentFrame.layoutSizingVertical = "HUG";
+    contentFrame.layoutSizingHorizontal = "HUG";
 }
 
 function addSiteMapContent(pageContent: FrameNode, background: { r: number; g: number; b: number; } | null, textColor: { r: number; g: number; b: number; } | null, menucolor: { r: number; g: number; b: number; } | null, siteMap: SiteMap) {
@@ -284,3 +305,38 @@ function getName(name: string, attributes: CustomAttribute[] | CustomAttribute) 
     }
 }
 
+function addColumnsFromGrid(contentFrame: FrameNode, background: { r: number; g: number; b: number; } | null, textColor: { r: number; g: number; b: number; } | null, grid: Grid) {
+    const strokeColor = hexToRgb("#BEBBB8");
+
+    const columnFrame1 = figma.createFrame();
+    columnFrame1.name = "Column Frame";
+    columnFrame1.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    columnFrame1.layoutMode = 'VERTICAL';
+    columnFrame1.counterAxisAlignItems = 'CENTER';
+
+    addIconRows(columnFrame1, grid.totalLines+1, background, strokeColor, "#000000", "Check");
+
+    const columnFrame2 = figma.createFrame();
+    columnFrame2.name = "Column Frame";
+    columnFrame2.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    columnFrame2.layoutMode = 'VERTICAL';
+    columnFrame2.counterAxisAlignItems = 'CENTER';
+
+    addIconRows(columnFrame2, grid.totalLines+1, background, strokeColor, "#000000", "Organization");
+
+    contentFrame.appendChild(columnFrame1);
+    contentFrame.appendChild(columnFrame2);
+
+    for (let index = 0; index < grid.columns.length; index++) {
+        const column = grid.columns[index];
+        const name = column.name;
+        const color = index == 0 ? "#0078D7" : "#000000";
+        const layoutSizingHor = (index+1) == grid.columns.length ? "FILL" : "HUG";
+
+        addTextFromGridRows(contentFrame,background,textColor,strokeColor,column.rows,color,name,layoutSizingHor);
+    }
+    columnFrame1.layoutSizingHorizontal = "HUG";
+    columnFrame1.layoutSizingVertical = "HUG";
+    columnFrame2.layoutSizingHorizontal = "HUG";
+    columnFrame2.layoutSizingVertical = "HUG";
+}

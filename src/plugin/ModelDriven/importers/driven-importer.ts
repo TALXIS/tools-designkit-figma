@@ -1,5 +1,6 @@
 import { findLastX, showIcon } from "../../../util/utils";
 import {hexToRGBA, hexToRgb} from '../../../util/colorUtil';
+import { Row } from "../../../model/Grid";
 
 export function makeDrivenTemplate() {
     const background = hexToRgb("#FFFFFF");
@@ -647,3 +648,77 @@ export function addTextRows(contentFrame: FrameNode, count: number, background: 
     headerFrame.layoutSizingHorizontal = horizontal;
 }   
 
+export function addTextFromGridRows(contentFrame: FrameNode, background: { r: number; g: number; b: number; } | null,textColor: { r: number; g: number; b: number; } | null, strokeColor: { r: number; g: number; b: number; } | null, rows: Row[],textHex: string,headerName: string,horizontal: LayoutMixin["layoutSizingHorizontal"]) {
+    const textRGB = hexToRgb(textHex);
+
+    const columnFrame = figma.createFrame();
+    columnFrame.name = "Column Frame";
+    columnFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    columnFrame.layoutMode = 'VERTICAL';
+    columnFrame.resize(40,35);
+    columnFrame.counterAxisAlignItems = 'CENTER';
+    columnFrame.paddingTop = 10;
+    columnFrame.paddingBottom = 8;
+    
+    const headerFrame = figma.createFrame();
+    headerFrame.name = "Column Header";
+    headerFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    headerFrame.strokes = [{ type: 'SOLID', color: { r: Number(strokeColor?.r), g: Number(strokeColor?.g), b: Number(strokeColor?.b) } }];
+    headerFrame.layoutMode = 'HORIZONTAL';
+    headerFrame.counterAxisAlignItems = 'MIN';
+    headerFrame.paddingLeft = 10;
+    headerFrame.paddingBottom = 8;
+    headerFrame.itemSpacing = 5;
+    headerFrame.strokeBottomWeight = 1;
+
+    const text = figma.createText();
+    text.characters = headerName;
+    text.name = "Label";
+    text.fontSize = 14;
+    text.fills = [{ type: 'SOLID', color: { r: Number(textColor?.r), g: Number(textColor?.g), b: Number(textColor?.b) } }];
+
+    headerFrame.appendChild(text);
+    showIcon("up","ArrowUp", 0, 0, 16, 16, hexToRGBA("#000000", 1), headerFrame,true);
+    showIcon("down","Down", 0, 0, 16, 16, hexToRGBA("#000000", 1), headerFrame,true);
+    showIcon("arrowdown","ArrowDown", 0, 0, 16, 16, hexToRGBA("#000000", 1), headerFrame,true);
+    showIcon("filter","Filter", 0, 0, 16, 16, hexToRGBA("#000000", 1), headerFrame,true);
+
+    columnFrame.appendChild(headerFrame);
+
+    for (let index = 0; index < rows.length; index++) {
+        const row = rows[index];
+        const cellFrame = figma.createFrame();
+        cellFrame.name = "Cells";
+        cellFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+        cellFrame.strokes = [{ type: 'SOLID', color: { r: Number(strokeColor?.r), g: Number(strokeColor?.g), b: Number(strokeColor?.b) } }];
+        cellFrame.layoutMode = 'VERTICAL';
+        cellFrame.resize(40,35);
+        cellFrame.counterAxisAlignItems = 'MIN';
+        cellFrame.paddingTop = 10;
+        cellFrame.paddingLeft = 10;
+        cellFrame.paddingBottom = 8;
+        cellFrame.strokeBottomWeight = 1;
+        cellFrame.itemSpacing = 15;
+        
+        const cellText = figma.createText();
+        cellText.characters = "" + row.value;
+        
+        cellText.name = "Value";
+        cellText.fontSize = 14;
+        cellText.fills = [{ type: 'SOLID', color: { r: Number(textRGB?.r), g: Number(textRGB?.g), b: Number(textRGB?.b) } }];
+
+        cellFrame.appendChild(cellText);
+
+        columnFrame.appendChild(cellFrame);
+
+        cellFrame.layoutSizingVertical = "HUG";
+        cellFrame.layoutSizingHorizontal = "FILL";
+    }
+
+    contentFrame.appendChild(columnFrame);
+
+    columnFrame.layoutSizingVertical = "HUG";
+    columnFrame.layoutSizingHorizontal = horizontal;
+    headerFrame.layoutSizingVertical = "HUG";
+    headerFrame.layoutSizingHorizontal = "FILL";
+}  

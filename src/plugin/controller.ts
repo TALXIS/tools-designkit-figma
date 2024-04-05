@@ -9,6 +9,7 @@ import { makeLegendInfo } from "./Canvas/importers/legend-importer";
 import { parseFlow } from "./PowerAutomate/parsers/flowParser";
 import { parseModelDrivenScreen } from "./ModelDriven/parsers/modelDrivenParser";
 import { importXMLFiles } from "./ModelDriven/importers/xml-importer";
+import { importJSONtoGrid } from "./ModelDriven/importers/json-data-importer";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 610);
@@ -68,6 +69,21 @@ figma.ui.onmessage = async msg => {
       });
     }
   });
+  }
+
+  if(msg.type == "grid") {
+    const data = msg.data;
+    if(data == undefined || data == "") {
+      figma.notify("Please input JSON data");
+      return;
+    }
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      importJSONtoGrid(data);
+      figma.closePlugin();
+      return;
+    });
   }
 
   if(msg.type == "import-flow") {

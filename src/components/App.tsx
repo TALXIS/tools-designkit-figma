@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/ui.css';
-import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,RadioGroup,Radio,RadioGroupOnChangeData } from '@fluentui/react-components';
+import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,RadioGroup,Radio,RadioGroupOnChangeData, Textarea, useId } from '@fluentui/react-components';
 
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -22,6 +22,8 @@ function App(props: PositioningProps) {
   const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
   const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
+
+  const grid = useId("area-grid");
 
   const flowPicker = useFilePicker({
     accept: '.json',
@@ -88,6 +90,10 @@ function App(props: PositioningProps) {
     if (type == "exportYaml") parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
     if(type == "tempVac") parent.postMessage({ pluginMessage: { type: 'tempVac' } }, '*');
     if(type == "tempLeg") parent.postMessage({ pluginMessage: { type: 'tempLeg',importPNG, redesignPNG,exportPNG,movePNG } }, '*');
+    if(type == "grid") {
+      const data = document.getElementsByName("grid")[0].innerHTML;
+      parent.postMessage({ pluginMessage: { type: 'grid',data } }, '*');
+    }
   };
 
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
@@ -204,6 +210,13 @@ function App(props: PositioningProps) {
       <br />
       <br />
       <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File</Button>
+      <br />
+      <br />
+      <Subtitle1 id='content'>Import JSON data for Grid</Subtitle1>
+      <Textarea id={grid} appearance='outline' className='grid' name='grid' />
+      <br />
+      <br />
+      <Button appearance="primary" onClick={() => onCreate("grid")}>GENERATE</Button>
     </div>
   ));
     const Flow = React.memo(() => (
@@ -249,7 +262,7 @@ function App(props: PositioningProps) {
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 0.3</Subtitle1>
+          <Subtitle1 id='footerText2'>version 0.4</Subtitle1>
         </div>
     </div>
     );

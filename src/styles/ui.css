@@ -126,6 +126,11 @@ body {
   justify-content: center;
 }
 
+.grid {
+  width: 70%;
+  height: 120px;
+}
+
 #exp, #imp {
   padding-top: 20px;
   display: grid;
