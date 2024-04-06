@@ -37,6 +37,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Import of Power Automate
 - [x] New UI for Power Automate Flow (after the Easter holiday)
 - [x] Import own JSON data for Model Driven Grid
+- [ ] Import JSON data from Mackaroo.com (end of week15)
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
