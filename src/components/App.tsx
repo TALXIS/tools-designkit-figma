@@ -324,7 +324,7 @@ function App(props: PositioningProps) {
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 0.5</Subtitle1>
+          <Subtitle1 id='footerText2'>version 1.0</Subtitle1>
         </div>
     </div>
     );
