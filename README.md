@@ -13,15 +13,12 @@
 </div>
 </div>
 
-> [!CAUTION]
+> [!IMPORTANT]
 > We are gradually open-sourcing the code, removing internal dependencies to make it universally applicable.
 > At this stage, it serves as a source of inspiration and a basis for collaboration.
 > We welcome feedback, suggestions, and contributions through pull requests.
  
 If wish to use this project for your team, please get in touch with us at info@mycondy.com for a personalized onboarding experience and customization to meet your specific needs.
-
-> [!IMPORTANT]
-> We will release new versions of the plugin in the next couple of weeks! It will be possible to download and try it through your Figma desktop app. Let's help each other out by reporting issues on our repo. 😊
 
 ## 🎉 Features
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery, Form) as a zip file
