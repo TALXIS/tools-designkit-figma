@@ -365,3 +365,42 @@ for (let index = 0; index < componentKeys.length; index++) {
 }
 return false;
 }
+
+export function isNumber(value?: string | number): boolean {
+  return ((value != null) &&
+          (value !== '') &&
+          !isNaN(Number(value.toString())));
+}
+
+export function isDate(dateStr: string) {
+ if(dateStr.length < 2 || isNumber(dateStr)) return false;
+ return !isNaN(new Date(dateStr).getDate());
+}
+
+export function formatDate(language: string) {
+ const randomD = randomDate(new Date(2015, 0, 0), new Date(2024, 0, 0));
+ switch(language) {
+   case "cs-CZ": {
+     const day = randomD.getDate().toString().padStart(2, '0');
+     const month = (randomD.getMonth() + 1).toString().padStart(2, '0');
+     const year = randomD.getFullYear();
+     return `${day}.${month}.${year}`;
+   }
+   case "en-GB": {
+     const day = randomD.getDate().toString().padStart(2, '0');
+     const month = (randomD.getMonth() + 1).toString().padStart(2, '0');
+     const year = randomD.getFullYear();
+     return `${day}/${month}/${year}`;
+   }
+   default: {
+     const day = randomD.getDate().toString().padStart(2, '0');
+     const month = (randomD.getMonth() + 1).toString().padStart(2, '0');
+     const year = randomD.getFullYear();
+     return `${month}/${day}/${year}`;
+   }
+ }
+}
+
+function randomDate(from: Date, to: Date) {
+   return new Date(from.getTime() + Math.random() * (to.getTime() - from.getTime()));
+}

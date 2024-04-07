@@ -333,7 +333,7 @@ function addColumnsFromGrid(contentFrame: FrameNode, background: { r: number; g:
         const color = index == 0 ? "#0078D7" : "#000000";
         const layoutSizingHor = (index+1) == grid.columns.length ? "FILL" : "HUG";
 
-        addTextFromGridRows(contentFrame,background,textColor,strokeColor,column.rows,color,name,layoutSizingHor);
+        addTextFromGridRows(contentFrame,background,textColor,strokeColor,column.rows,grid.language,color,name,layoutSizingHor);
     }
     columnFrame1.layoutSizingHorizontal = "HUG";
     columnFrame1.layoutSizingVertical = "HUG";

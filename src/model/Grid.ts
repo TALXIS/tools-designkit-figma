@@ -1,10 +1,12 @@
 export class Grid {
     columns: Column[];
     totalLines: number;
+    language: string;
 
-    constructor(columns: Column[],totalLines: number) {
+    constructor(columns: Column[],totalLines: number,language: string) {
         this.columns = columns;
         this.totalLines = totalLines;
+        this.language = language;
     }
 }
 

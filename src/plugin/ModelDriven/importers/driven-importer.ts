@@ -1,4 +1,4 @@
-import { findLastX, showIcon } from "../../../util/utils";
+import { findLastX, formatDate, isDate, isNumber, showIcon } from "../../../util/utils";
 import {hexToRGBA, hexToRgb} from '../../../util/colorUtil';
 import { Row } from "../../../model/Grid";
 
@@ -648,7 +648,8 @@ export function addTextRows(contentFrame: FrameNode, count: number, background: 
     headerFrame.layoutSizingHorizontal = horizontal;
 }   
 
-export function addTextFromGridRows(contentFrame: FrameNode, background: { r: number; g: number; b: number; } | null,textColor: { r: number; g: number; b: number; } | null, strokeColor: { r: number; g: number; b: number; } | null, rows: Row[],textHex: string,headerName: string,horizontal: LayoutMixin["layoutSizingHorizontal"]) {
+export function addTextFromGridRows(contentFrame: FrameNode, background: { r: number; g: number; b: number; } | null,textColor: { r: number; g: number; b: number; } | null, 
+    strokeColor: { r: number; g: number; b: number; } | null, rows: Row[],language: string,textHex: string,headerName: string,horizontal: LayoutMixin["layoutSizingHorizontal"]) {
     const textRGB = hexToRgb(textHex);
 
     const columnFrame = figma.createFrame();
@@ -684,25 +685,29 @@ export function addTextFromGridRows(contentFrame: FrameNode, background: { r: nu
     showIcon("filter","Filter", 0, 0, 16, 16, hexToRGBA("#000000", 1), headerFrame,true);
 
     columnFrame.appendChild(headerFrame);
-
     for (let index = 0; index < rows.length; index++) {
         const row = rows[index];
+
         const cellFrame = figma.createFrame();
         cellFrame.name = "Cells";
         cellFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
         cellFrame.strokes = [{ type: 'SOLID', color: { r: Number(strokeColor?.r), g: Number(strokeColor?.g), b: Number(strokeColor?.b) } }];
         cellFrame.layoutMode = 'VERTICAL';
         cellFrame.resize(40,35);
-        cellFrame.counterAxisAlignItems = 'MIN';
+
+        if(isNumber(row.value) || isDate(row.value)) {
+            cellFrame.counterAxisAlignItems = 'MAX';
+        } else cellFrame.counterAxisAlignItems = 'MIN';
+
         cellFrame.paddingTop = 10;
         cellFrame.paddingLeft = 10;
         cellFrame.paddingBottom = 8;
         cellFrame.strokeBottomWeight = 1;
         cellFrame.itemSpacing = 15;
-        
+
+        const val = isDate(row.value) && language != "none" ? formatDate(language) : "" + row.value;
         const cellText = figma.createText();
-        cellText.characters = "" + row.value;
-        
+        cellText.characters = val;
         cellText.name = "Value";
         cellText.fontSize = 14;
         cellText.fills = [{ type: 'SOLID', color: { r: Number(textRGB?.r), g: Number(textRGB?.g), b: Number(textRGB?.b) } }];

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import '../styles/ui.css';
-import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,RadioGroup,Radio,RadioGroupOnChangeData, Textarea, useId } from '@fluentui/react-components';
+import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,
+  RadioGroup,Radio,RadioGroupOnChangeData, Textarea, useId, CheckboxOnChangeData, Checkbox, Input, Dropdown, Option} from '@fluentui/react-components';
 
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -22,8 +23,12 @@ function App(props: PositioningProps) {
   const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
   const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
+  const [mockarooValue, setMockarooValue] = React.useState(false);
 
   const grid = useId("area-grid");
+  const apikey = useId("input-key");
+  const endpoint = useId("input-endpoint");
+  const language = useId("dropdown-language");
 
   const flowPicker = useFilePicker({
     accept: '.json',
@@ -94,6 +99,12 @@ function App(props: PositioningProps) {
       const data = document.getElementsByName("grid")[0].innerHTML;
       parent.postMessage({ pluginMessage: { type: 'grid',data } }, '*');
     }
+    if(type == "mockaroo") {
+      const apiVal = document.getElementsByName("key")[0].getAttribute("value");
+      const endVal = document.getElementsByName("endpoint")[0].getAttribute("value");
+      const langVal = document.getElementsByName("language")[0].innerText;
+      parent.postMessage({ pluginMessage: { type: 'mockaroo',apiVal,endVal,langVal } }, '*');
+    }
   };
 
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
@@ -128,6 +139,25 @@ function App(props: PositioningProps) {
     setSelectedContent("jsoncontent");
   }
 
+  const onChecked = (ev: ChangeEvent<HTMLInputElement>, data: CheckboxOnChangeData) => {
+    const bool = data.checked as boolean;
+    setMockarooValue(bool);
+  }
+
+
+  const ColoredLine2 = ({ color }: {color: string}) => (
+    <hr
+        style={{
+            border: '1px dashed ' + color,
+            color: color,
+            backgroundColor: color,
+            height: 0.2,
+            width: 333,
+            marginTop: 10
+        }}
+    />
+  );
+  
   const Horizontal = () => (
     <RadioGroup className='header2' value={value} layout="horizontal" onChange={onOptionChange}>
       <Radio value="json" label="JSON" />
@@ -212,11 +242,43 @@ function App(props: PositioningProps) {
       <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File</Button>
       <br />
       <br />
-      <Subtitle1 id='content'>Import JSON data for Grid</Subtitle1>
-      <Textarea id={grid} appearance='outline' className='grid' name='grid' />
+      <ColoredLine2 color="#C2C8D7" />
+      <Checkbox checked={mockarooValue} label="Mockaroo API" onChange={onChecked} />
       <br />
-      <br />
-      <Button appearance="primary" onClick={() => onCreate("grid")}>GENERATE</Button>
+      {mockarooValue === false && (
+        <span>
+          <Subtitle1 id='content'>Import JSON data for Grid</Subtitle1>
+          <Textarea id={grid} appearance='outline' className='grid' name='grid' />
+          <br />
+          <br />
+          <Button appearance="primary" onClick={() => onCreate("grid")}>GENERATE</Button>
+        </span>
+      )}
+      {mockarooValue === true && (
+          <div id='gitcontent'>
+            <div id='gitcontent2'>
+              <div className='col-2'>
+                <Label id='subheading' htmlFor={apikey}>X-API-KEY *</Label>
+                <Input className='inp' name='key' type='password' appearance='outline' id={apikey} />
+              </div>
+              <div className='col-2'>
+                <Label id='subheading' htmlFor={language}>Language *</Label>
+                <Dropdown name='language' style={{ minWidth: '166px' }} aria-labelledby={language} appearance="outline" defaultValue="en-US">
+                  <Option>en-US</Option>
+                  <Option>en-GB</Option>
+                  <Option>cs-CZ</Option>
+                </Dropdown>
+              </div>
+              <br />
+              <br />
+            </div>
+            <Label id='subheading' htmlFor={endpoint}>Endpoint *</Label>
+            <Input name='endpoint' type='text' appearance='outline' id={endpoint} />
+            <br />
+            <Button appearance="primary" onClick={() => onCreate("mockaroo")}>GENERATE</Button>
+          </div>
+
+      )}
     </div>
   ));
     const Flow = React.memo(() => (
@@ -262,7 +324,7 @@ function App(props: PositioningProps) {
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 0.4</Subtitle1>
+          <Subtitle1 id='footerText2'>version 0.5</Subtitle1>
         </div>
     </div>
     );

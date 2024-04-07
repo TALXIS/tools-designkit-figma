@@ -9,7 +9,7 @@ import { makeLegendInfo } from "./Canvas/importers/legend-importer";
 import { parseFlow } from "./PowerAutomate/parsers/flowParser";
 import { parseModelDrivenScreen } from "./ModelDriven/parsers/modelDrivenParser";
 import { importXMLFiles } from "./ModelDriven/importers/xml-importer";
-import { importJSONtoGrid } from "./ModelDriven/importers/json-data-importer";
+import { importJSONtoGrid, importMockarooToGrid } from "./ModelDriven/importers/json-data-importer";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 610);
@@ -84,6 +84,22 @@ figma.ui.onmessage = async msg => {
       figma.closePlugin();
       return;
     });
+  }
+  if(msg.type == "mockaroo") {
+    const api = msg.apiVal;
+    const endpoint = msg.endVal;
+    const language = msg.langVal;
+    if(api == undefined || endpoint == undefined || api == "" || endpoint == "") {
+      figma.notify("Please enter API KEY and Endpoint");
+      return;
+    }
+    (async() => {
+      await loadFonts();
+    })().then(() => {
+      importMockarooToGrid(api,endpoint,language);
+      return;
+    });
+    return;
   }
 
   if(msg.type == "import-flow") {

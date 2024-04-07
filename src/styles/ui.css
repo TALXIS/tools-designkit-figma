@@ -116,6 +116,27 @@ body {
   color: #262626;
   text-align: center;
 }
+#gitcontent {
+  display: grid;
+  width: 82%;
+  text-align: start;
+  padding-left: 38px;
+}
+#gitcontent2 {
+  display: flex;
+  width: 100%;
+  text-align: start;
+  padding-bottom: 5px;
+}
+
+#gitcontent2 .col-2 {
+  flex: 40%;
+  width: 30%;
+}
+
+#gitcontent2 .inp {
+  width: 140px;
+}
 
 #files {
   color: #fff;
