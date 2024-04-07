@@ -14,8 +14,6 @@
 </div>
 
 > [!CAUTION]
-> This project is currently in development and not ready for production use.
-> While we actively use these tools internally, we aim to share and collaborate with the broader community to refine and enhance their capabilities.
 > We are gradually open-sourcing the code, removing internal dependencies to make it universally applicable.
 > At this stage, it serves as a source of inspiration and a basis for collaboration.
 > We welcome feedback, suggestions, and contributions through pull requests.
@@ -37,7 +35,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Import of Power Automate
 - [x] New UI for Power Automate Flow (after the Easter holiday)
 - [x] Import own JSON data for Model Driven Grid
-- [ ] Import JSON data from Mackaroo.com (end of week15)
+- [x] Import JSON data from Mackaroo.com (end of week15)
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
