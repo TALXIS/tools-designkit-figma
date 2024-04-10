@@ -29,6 +29,7 @@ function App(props: PositioningProps) {
   const apikey = useId("input-key");
   const endpoint = useId("input-endpoint");
   const language = useId("dropdown-language");
+  const output = useId("dropdown-output");
 
   const flowPicker = useFilePicker({
     accept: '.json',
@@ -103,7 +104,8 @@ function App(props: PositioningProps) {
       const apiVal = document.getElementsByName("key")[0].getAttribute("value");
       const endVal = document.getElementsByName("endpoint")[0].getAttribute("value");
       const langVal = document.getElementsByName("language")[0].innerText;
-      parent.postMessage({ pluginMessage: { type: 'mockaroo',apiVal,endVal,langVal } }, '*');
+      const outVal = document.getElementsByName("output")[0].innerText;
+      parent.postMessage({ pluginMessage: { type: 'mockaroo',apiVal,endVal,langVal,outVal } }, '*');
     }
   };
 
@@ -269,11 +271,20 @@ function App(props: PositioningProps) {
                   <Option>cs-CZ</Option>
                 </Dropdown>
               </div>
-              <br />
-              <br />
             </div>
-            <Label id='subheading' htmlFor={endpoint}>Endpoint *</Label>
-            <Input name='endpoint' type='text' appearance='outline' id={endpoint} />
+            <div id='gitcontent2'>
+              <div className='col-2'>
+                <Label id='subheading' htmlFor={endpoint}>Endpoint *</Label>
+                <Input name='endpoint' className='inp' type='text' appearance='outline' id={endpoint} />
+                </div>
+                <div className='col-2'>
+                  <Label id='subheading' htmlFor={output}>Output *</Label>
+                  <Dropdown name='output' style={{ minWidth: '166px' }} aria-labelledby={output} appearance="outline" defaultValue="View">
+                    <Option>View</Option>
+                    <Option>Form</Option>
+                  </Dropdown>    
+              </div>
+            </div>
             <br />
             <Button appearance="primary" onClick={() => onCreate("mockaroo")}>GENERATE</Button>
           </div>

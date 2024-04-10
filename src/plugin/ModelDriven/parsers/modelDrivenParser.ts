@@ -1,5 +1,5 @@
 import { ModelDrivenScreen} from "../../../model/ModelDrivenScreen";
-import { findLastX, showIcon } from "../../../util/utils";
+import { findLastX, formatDate, isDate, showIcon } from "../../../util/utils";
 import { addArea, addHeader, addIconRows, addItem, addMenuItem, addNavigationContent, addTextFromGridRows, addTextRows } from "../importers/driven-importer";
 import {hexToRGBA, hexToRgb} from '../../../util/colorUtil';
 import { SiteMap, SiteMapTypeAreaGroup } from "../../../model/SiteMap";
@@ -63,6 +63,78 @@ export function parseGrid(grid: Grid) {
 
     contentFrame.layoutSizingVertical = "HUG";
     contentFrame.layoutSizingHorizontal = "HUG";
+}
+
+export function parseForm(grid: Grid) {
+    const background = hexToRgb("#FFFFFF");
+    const dividerColor = hexToRgb("#EDEBE9");
+
+    const columnFrame = figma.createFrame();
+    columnFrame.name = "Column";
+    columnFrame.x = findLastX();
+    columnFrame.y = 0;
+    columnFrame.resize(400,100);
+    columnFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) },opacity:0 }];
+    columnFrame.layoutMode = 'VERTICAL';
+    columnFrame.counterAxisAlignItems = 'MIN';
+    columnFrame.paddingLeft = 9;
+    columnFrame.paddingRight = 9;
+    columnFrame.paddingTop = 10;
+    columnFrame.paddingBottom = 10;
+    columnFrame.itemSpacing = 16;
+
+    for (let index = 0; index < grid.totalLines; index++) {
+        
+        const contentFrame = figma.createFrame();
+        contentFrame.name = "Section Frame";
+        contentFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+        contentFrame.layoutMode = 'VERTICAL';
+        contentFrame.counterAxisAlignItems = 'MIN';
+        contentFrame.minWidth = 400;
+        contentFrame.effects = [ {type: "DROP_SHADOW",color: {r: 0, g: 0 , b: 0, a: 0.1},offset: {x: 0, y: 0.3},radius: 0.9,visible: true,blendMode:"NORMAL"},
+        {type: "DROP_SHADOW",color: {r: 0, g: 0 , b: 0, a: 0.13},offset: {x: 0, y: 1.6},radius: 3.6,visible: true,blendMode:"NORMAL"}];
+
+        const titleFrame = figma.createFrame();
+        titleFrame.name = "Section Name Frame";
+        titleFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) },opacity:0 }];
+        titleFrame.layoutMode = 'VERTICAL';
+        titleFrame.counterAxisAlignItems = 'MIN';
+        titleFrame.paddingLeft = 18;
+        titleFrame.paddingRight = 18;
+        titleFrame.paddingTop = 10;
+        titleFrame.paddingBottom = 2;
+        titleFrame.itemSpacing = 10;
+
+        const sectionTitle = figma.createText();
+        sectionTitle.characters = "Title";
+        sectionTitle.name = "Section Name";
+        sectionTitle.fontName = { family: "Inter", style: "Bold" };
+        sectionTitle.fontSize = 18;
+
+        const divider = figma.createRectangle();
+        divider.name = "Divider";
+        divider.fills = [{ type: 'SOLID', color: { r: Number(dividerColor?.r), g: Number(dividerColor?.g), b: Number(dividerColor?.b) } }];
+        divider.resize(400,1);
+
+        titleFrame.appendChild(sectionTitle);
+        titleFrame.appendChild(divider);
+        
+        contentFrame.appendChild(titleFrame);
+        
+        titleFrame.layoutSizingVertical = "HUG";
+        titleFrame.layoutSizingHorizontal = "FILL";
+        
+        columnFrame.appendChild(contentFrame);
+
+        addGridToForm(contentFrame,grid,index,background);
+        
+        contentFrame.layoutSizingVertical = "HUG";
+        contentFrame.layoutSizingHorizontal = "HUG";
+        
+        divider.layoutSizingHorizontal = "FILL";
+    }
+    columnFrame.layoutSizingVertical = "HUG";
+    columnFrame.layoutSizingHorizontal = "HUG";
 }
 
 function addSiteMapContent(pageContent: FrameNode, background: { r: number; g: number; b: number; } | null, textColor: { r: number; g: number; b: number; } | null, menucolor: { r: number; g: number; b: number; } | null, siteMap: SiteMap) {
@@ -339,4 +411,91 @@ function addColumnsFromGrid(contentFrame: FrameNode, background: { r: number; g:
     columnFrame1.layoutSizingVertical = "HUG";
     columnFrame2.layoutSizingHorizontal = "HUG";
     columnFrame2.layoutSizingVertical = "HUG";
+}
+function addGridToForm(contentFrame: FrameNode,grid: Grid,i: number, background: { r: number; g: number; b: number; } | null) {
+    const mandatoryColor = hexToRgb("#A4262C");
+
+    const rowsFrame = figma.createFrame();
+    rowsFrame.name = "Rows";
+    rowsFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) },opacity:0 }];
+    rowsFrame.layoutMode = 'VERTICAL';
+    rowsFrame.counterAxisAlignItems = 'MIN';
+    rowsFrame.minWidth = 601;
+    rowsFrame.paddingLeft = 20;
+    rowsFrame.paddingRight = 20;
+    rowsFrame.paddingTop = 20;
+    rowsFrame.paddingBottom = 20;
+    rowsFrame.itemSpacing = 20;
+    
+    for (let index = 0; index < grid.columns.length; index++) {
+        const element = grid.columns[index];
+        
+        const fieldFrame = figma.createFrame();
+        fieldFrame.name = "Field";
+        fieldFrame.layoutMode = 'HORIZONTAL';
+        fieldFrame.counterAxisAlignItems = 'MIN';
+        fieldFrame.layoutWrap = 'WRAP';
+        fieldFrame.itemSpacing = 5;
+        fieldFrame.minWidth = 561;
+        
+        const labelFrame = figma.createFrame();
+        labelFrame.name = "Labels";
+        labelFrame.layoutMode = 'HORIZONTAL';
+        labelFrame.counterAxisAlignItems = 'MIN';
+        labelFrame.layoutWrap = 'WRAP';
+        labelFrame.itemSpacing = 5;
+        labelFrame.minWidth = 150;
+        
+        const valueTitle = figma.createText();
+        valueTitle.characters = element.name;
+        valueTitle.name = "Value";
+        valueTitle.fontSize = 14;
+        
+        const mandatory = figma.createText();
+        mandatory.characters = "*";
+        mandatory.name = "Mandatory";
+        mandatory.fontSize = 14;
+        mandatory.fills = [{ type: 'SOLID', color: { r: Number(mandatoryColor?.r), g: Number(mandatoryColor?.g), b: Number(mandatoryColor?.b) } }];
+        mandatory.visible = false;
+        
+        labelFrame.appendChild(valueTitle);
+        labelFrame.appendChild(mandatory);
+
+        const fieldValueFrame = figma.createFrame();
+        fieldValueFrame.name = "Field";
+        fieldValueFrame.layoutMode = 'HORIZONTAL';
+        fieldValueFrame.counterAxisAlignItems = 'MIN';
+        fieldValueFrame.layoutPositioning = "AUTO";
+
+        const placeholder = figma.createText();
+        const val = isDate(element.rows[i].value) && grid.language != "none" ? formatDate(grid.language) : "" + element.rows[i].value;
+        placeholder.characters = val;
+        placeholder.name = "Placeholder";
+        placeholder.fontSize = 14;
+
+        fieldValueFrame.appendChild(placeholder);
+
+        fieldFrame.appendChild(labelFrame);
+        fieldFrame.appendChild(fieldValueFrame);
+
+        rowsFrame.appendChild(fieldFrame);
+
+        placeholder.layoutSizingHorizontal = "HUG";
+        valueTitle.layoutSizingHorizontal = "HUG";
+        labelFrame.layoutSizingVertical = "HUG";
+
+        labelFrame.layoutSizingHorizontal = "HUG";
+        labelFrame.layoutSizingVertical = "HUG";
+
+        fieldValueFrame.layoutSizingHorizontal = "FILL";
+        fieldValueFrame.layoutSizingVertical = "HUG";
+        
+        fieldFrame.layoutSizingHorizontal = "FILL";
+        fieldFrame.layoutSizingVertical = "HUG";
+    }
+    
+    contentFrame.appendChild(rowsFrame);
+
+    rowsFrame.layoutSizingHorizontal = "FILL";
+    rowsFrame.layoutSizingVertical = "HUG";
 }

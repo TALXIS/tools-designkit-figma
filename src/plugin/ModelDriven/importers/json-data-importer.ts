@@ -1,17 +1,17 @@
 import { Column, Grid, Row } from "../../../model/Grid";
-import { parseGrid } from "../parsers/modelDrivenParser";
+import { parseForm, parseGrid } from "../parsers/modelDrivenParser";
 
 export function importJSONtoGrid(data: any) {
     try {
         const json = JSON.parse(data);
     
-        parseJSONtoGrid(json,"none"); 
+        parseJSONtoGrid(json,"none","View"); 
     } catch(error) {
         figma.notify("Invalid JSON file");
     }
 }
 
-export async function importMockarooToGrid(api: string, endpoint: string,language: string) {
+export async function importMockarooToGrid(api: string, endpoint: string,language: string,output: string) {
     const response = await fetch("https://my.api.mockaroo.com/"+ endpoint, {
         headers:{
             'X-API-Key' : api
@@ -23,12 +23,12 @@ export async function importMockarooToGrid(api: string, endpoint: string,languag
             figma.notify("40x - Not content found with filled inputs");
             return;
         }
-        parseJSONtoGrid(value,language);
+        parseJSONtoGrid(value,language,output);
         figma.closePlugin();
     });
 }
 
-function parseJSONtoGrid(json: any,language: string) {
+function parseJSONtoGrid(json: any,language: string,output: string) {
     const columns: Column[] = [];
     let totalLines = 5;
     if (Array.isArray(json)) {
@@ -57,5 +57,6 @@ function parseJSONtoGrid(json: any,language: string) {
 
     }
     const grid = new Grid(columns, totalLines,language);
-    parseGrid(grid);
+    if(output == "View") parseGrid(grid);
+    else parseForm(grid);
 }

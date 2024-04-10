@@ -89,6 +89,7 @@ figma.ui.onmessage = async msg => {
     const api = msg.apiVal;
     const endpoint = msg.endVal;
     const language = msg.langVal;
+    const output = msg.outVal;
     if(api == undefined || endpoint == undefined || api == "" || endpoint == "") {
       figma.notify("Please enter API KEY and Endpoint");
       return;
@@ -96,7 +97,7 @@ figma.ui.onmessage = async msg => {
     (async() => {
       await loadFonts();
     })().then(() => {
-      importMockarooToGrid(api,endpoint,language);
+      importMockarooToGrid(api,endpoint,language,output);
       return;
     });
     return;
