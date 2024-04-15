@@ -483,6 +483,62 @@ export function addHeader(mainContent: FrameNode,background: { r: number; g: num
     header.layoutSizingHorizontal = "FILL";
 }
 
+export function addHeaderForm(mainContent: FrameNode,background: { r: number; g: number; b: number; } | null, textColor: { r: number; g: number; b: number; } | null,headerName: string) {
+    const blueColor = hexToRgb("#0078D7");
+
+    const header = figma.createFrame();
+    header.name = "Header";
+    header.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    header.layoutMode = 'HORIZONTAL';
+    header.counterAxisAlignItems = 'CENTER';
+    header.paddingLeft = 24;
+    header.paddingRight = 32;
+    header.paddingTop = 15;
+    header.paddingBottom = 15;
+    header.itemSpacing = 5;
+
+    const headerFrame = figma.createFrame();
+    headerFrame.name = "Header Frame";
+    headerFrame.fills = [{ type: 'SOLID', color: { r: Number(background?.r), g: Number(background?.g), b: Number(background?.b) } }];
+    headerFrame.layoutMode = 'VERTICAL';
+    headerFrame.counterAxisAlignItems = 'MIN';
+    headerFrame.itemSpacing = 11;
+
+    const headerText = figma.createText();
+    headerText.characters = headerName;
+    headerText.name = "label";
+    headerText.fontSize = 20;
+    headerText.fontName = { family: "Inter", style: "Bold" };
+    headerText.fills = [{ type: 'SOLID', color: { r: Number(textColor?.r), g: Number(textColor?.g), b: Number(textColor?.b) } }];
+
+    const tabText = figma.createText();
+    tabText.characters = "General";
+    tabText.name = "label";
+    tabText.fontSize = 14;
+    tabText.fontName = { family: "Inter", style: "Bold" };
+    tabText.fills = [{ type: 'SOLID', color: { r: Number(textColor?.r), g: Number(textColor?.g), b: Number(textColor?.b) } }];
+
+    const divider = figma.createRectangle();
+    divider.name = "selection";
+    divider.resize(51, 3);
+    divider.fills = [{ type: 'SOLID', color: { r: Number(blueColor?.r), g: Number(blueColor?.g), b: Number(blueColor?.b) } }];
+
+    headerFrame.appendChild(headerText);
+    headerFrame.appendChild(tabText);
+    headerFrame.appendChild(divider);
+
+    header.appendChild(headerFrame);
+
+
+    headerFrame.layoutSizingHorizontal = "FILL";
+    headerFrame.layoutSizingVertical = "HUG";
+
+    mainContent.appendChild(header);
+
+    header.layoutSizingVertical = "HUG";
+    header.layoutSizingHorizontal = "FILL";
+}
+
 export function addItem(bar: FrameNode, textColor: { r: number; g: number; b: number; } | null,iconName: string,value: string,hex: string) {
     showIcon(iconName,iconName, 0, 0, 20, 20, hexToRGBA(hex, 1), bar,true);
 

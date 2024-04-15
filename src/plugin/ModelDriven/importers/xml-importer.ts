@@ -41,11 +41,12 @@ export function importXMLFiles(files: any[],fromGit: boolean) {
                 
                 const siteMap = loadSiteMap(parentObject.AppModuleSiteMaps);
                 const entity = loadEntity(parentObject.Entities);
-                const savedQuery = loadSavedQeury(parentObject.Entities);
+                const savedQuery = loadSavedQuery(parentObject.Entities);
+                const form = loadForm(parentObject.Entities);
 
-                if(entity != undefined && siteMap != undefined && savedQuery != undefined) {
+                if(entity != undefined && siteMap != undefined) {
                     const appName = parentObject.AppModules.AppModule.UniqueName._text;
-                    const modelDrivenScreen = new ModelDrivenScreen(entity,siteMap,savedQuery,optionSets,appName);
+                    const modelDrivenScreen = new ModelDrivenScreen(entity,siteMap,savedQuery,optionSets,form,appName);
                     modelDrivenScreens.push(modelDrivenScreen);
 
                 } else figma.notify("Imported XML has undefined Entity or SiteMap");
@@ -233,16 +234,6 @@ function loadEntity(Entities: any) {
             const localizedName = entityInfo.LocalizedNames.LocalizedName._attributes.description;
             const dscr = entityInfo.Descriptions.Description._attributes.description;
 
-            const forms = entity.FormXml.forms;
-            const formXML: SystemForm[] = [];
-            if (Array.isArray(forms)) {
-                forms.forEach(form => {
-                    addForm(form, formXML);
-                })
-            } else {
-                addForm(forms, formXML);
-            }
-
             const attributes: EntityAttribute[] = [];
             addAttributes(entityInfo.attributes,attributes);
 
@@ -253,12 +244,30 @@ function loadEntity(Entities: any) {
     }
 }
 
-function loadSavedQeury(Entities: any) {
+function loadSavedQuery(Entities: any) {
     if(Entities != undefined) {
         const entity = Entities.Entity;
         if(entity != undefined) {
             const savedQuery = addSavedQuery(entity.SavedQueries);
             return savedQuery;
+        }
+    }
+}
+
+function loadForm(Entities: any) {
+    if(Entities != undefined) {
+        const entity = Entities.Entity;
+        if(entity != undefined) {
+            const forms = entity.FormXml.forms;
+            const formXML: SystemForm[] = [];
+            if (Array.isArray(forms)) {
+                forms.forEach(form => {
+                    addForm(form, formXML);
+                })
+            } else {
+                    addForm(forms, formXML);
+            }
+            return formXML[0];
         }
     }
 }
@@ -334,7 +343,7 @@ function addSection(sections: any, sctions: FormTypeTabsTabColumnSectionsSection
         addRow(rows, rws);
     }
     const labels = new FormXmlLabelsTypeLabel(label,"1033");
-    const sectionRows = new FormTypeTabsTabColumnSectionsSectionRows(rows);
+    const sectionRows = new FormTypeTabsTabColumnSectionsSectionRows(rws);
     const section = new FormTypeTabsTabColumnSectionsSection(id,label,String(1),true,false,Guid.create().toString(),labels, sectionRows);
     sctions.push(section);
 }
@@ -353,8 +362,11 @@ function addRow(element: any, rws: FormTypeTabsTabColumnSectionsSectionRowsRow[]
 
     const cntrl = new FormXmlControlType(controlID, controlClass, controlFieldName,false);
     
+    const cellLabels: FormXmlLabelsTypeLabel[] = [];
+
     const cellLabel = new FormXmlLabelsTypeLabel(label,"1033");
-    const cll = new FormTypeTabsTabColumnSectionsSectionRowsRowCell(id,Guid.create().toString(),rowSpan,colSpan,true, cellLabel, cntrl);
+    cellLabels.push(cellLabel);
+    const cll = new FormTypeTabsTabColumnSectionsSectionRowsRowCell(id,Guid.create().toString(),rowSpan,colSpan,true, cellLabels, cntrl);
 
     const rowCell = new FormTypeTabsTabColumnSectionsSectionRowsRow(cll);
 
