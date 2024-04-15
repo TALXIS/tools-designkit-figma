@@ -317,15 +317,15 @@ function addBarContent(background: { r: number; g: number; b: number; } | null, 
 
         addItem(bar, textColor, "Add", "Font", "#000000");
         addItem(bar, textColor, "Deactivate", "Deactivate", "#000000");
-        addItem(bar, textColor, "Delete", "Delete", "#000000");
-        addItem(bar, textColor, "Refresh", "Refresh", "#000000");
+        addItem(bar, textColor, "Trash", "Trash", "#000000");
+        addItem(bar, textColor, "Reload", "Reload", "#000000");
     } else {
         addItem(bar, textColor, "View", "Create View", "#000000");
         addItem(bar, textColor, "Save", "Save as", "#000000");
         addItem(bar, textColor, "Image", "Show chart", "#000000");
         addItem(bar, textColor, "Add", "Font", "#000000");
-        addItem(bar, textColor, "Delete", "Delete", "#000000");
-        addItem(bar, textColor, "Refresh", "Refresh", "#000000");
+        addItem(bar, textColor, "Trash", "Trash", "#000000");
+        addItem(bar, textColor, "Reload", "Reload", "#000000");
     }
     showIcon("more", "MoreDown", 0, 0, 20, 20, hexToRGBA("#000000", 1), bar, true);
     return bar;
