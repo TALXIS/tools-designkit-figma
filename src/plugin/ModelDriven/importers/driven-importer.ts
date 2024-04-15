@@ -40,7 +40,10 @@ export function addNavigationContent(frame: FrameNode, background: { r: number; 
     navigation.layoutMode = 'HORIZONTAL';
     navigation.counterAxisAlignItems = 'CENTER';
     navigation.itemSpacing = 10;
-    navigation.paddingLeft = 5;
+    navigation.paddingLeft = 10;
+    navigation.paddingRight = 10;
+    navigation.paddingTop = 2;
+    navigation.paddingBottom = 2;
 
     const left = figma.createFrame();
     left.name = "Left";
@@ -363,6 +366,7 @@ export function addMenuItem(menucolor: { r: number; g: number; b: number; } | nu
     
     item.appendChild(text);
 
+    text.layoutSizingHorizontal = "FILL";
     if(showSub) {
         showIcon("down","Down",0,0,20,20,hexToRGBA("#000000",1),item,true);
     }

@@ -200,14 +200,17 @@ function addSiteMapContent(pageContent: FrameNode, background: { r: number; g: n
     hamburger.layoutSizingVertical = "HUG";
 
     topItems.layoutSizingVertical = "HUG";
-    topItems.layoutSizingHorizontal = "HUG";
+    topItems.layoutSizingHorizontal = "FILL";
 
     area.layoutSizingVertical = "HUG";
     area.layoutSizingHorizontal = "FILL";
 
     item.layoutSizingVertical = "HUG";
+    item.layoutSizingHorizontal = "FILL";
     item2.layoutSizingVertical = "HUG";
+    item2.layoutSizingHorizontal = "FILL";
     item3.layoutSizingVertical = "HUG";
+    item3.layoutSizingHorizontal = "FILL";
 }
 function addGroups(sitemap: FrameNode, menucolor: { r: number; g: number; b: number; } | null, textColor: { r: number; g: number; b: number; } | null, groups: SiteMapTypeAreaGroup[]) {
     for (let i = 0; i < groups.length; i++) {
