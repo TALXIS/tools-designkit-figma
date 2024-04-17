@@ -34,6 +34,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Import own JSON data for Model Driven Grid
 - [x] Import JSON data from Mackaroo.com (end of week15)
 - [x] Generate JSON data from Mockaroo API with possibility to View or Form
+- [x] Upload selected Figma frames on SharePoint via GraphAPI
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
