@@ -147,6 +147,17 @@ body {
   justify-content: center;
 }
 
+#exportcontent {
+  display: grid;
+  width: 82%;
+  text-align: start;
+  padding-left: 38px;
+}
+
+#buttonE {
+  background-color: #00C2A3;
+}
+
 .grid {
   width: 70%;
   height: 120px;

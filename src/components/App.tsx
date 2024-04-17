@@ -24,12 +24,17 @@ function App(props: PositioningProps) {
   const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
   const [mockarooValue, setMockarooValue] = React.useState(false);
+  const [selectedExportContent, setSelectedExportContent] = React.useState("");
 
   const grid = useId("area-grid");
   const apikey = useId("input-key");
   const endpoint = useId("input-endpoint");
   const language = useId("dropdown-language");
   const output = useId("dropdown-output");
+
+  const m365Token = useId("input-m365-token");
+  const m365Path = useId("input-path");
+  const m365SiteID = useId("input-siteid");
 
   const flowPicker = useFilePicker({
     accept: '.json',
@@ -107,12 +112,19 @@ function App(props: PositioningProps) {
       const outVal = document.getElementsByName("output")[0].innerText;
       parent.postMessage({ pluginMessage: { type: 'mockaroo',apiVal,endVal,langVal,outVal } }, '*');
     }
+    if(type == "doc") {
+      const m365T = document.getElementsByName("m365token")[0].getAttribute("value");
+      const m365S = document.getElementsByName("m365siteid")[0].getAttribute("value");
+      const m365P = document.getElementsByName("m365path")[0].getAttribute("value");
+      parent.postMessage({ pluginMessage: { type: 'doc',m365T,m365S,m365P } }, '*');
+    }
   };
 
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
       setSelectedValue(data.value);
       if (data.value == "canvas") {
         setSelectedHelperContent("");
+        setSelectedExportContent("");
         if (value == "yaml") {
           setSelectedContent("yamlcontent")
         } else {
@@ -120,13 +132,20 @@ function App(props: PositioningProps) {
         }
       } else if(data.value == "flow") {
         setSelectedHelperContent("");
+        setSelectedExportContent("");
         setSelectedContent("flow")
       } else if (data.value == "helper") {
         setSelectedContent("");
+        setSelectedExportContent("");
         setSelectedHelperContent("template");
+      } else if(data.value == "exports") {
+        setSelectedContent("");
+        setSelectedHelperContent("");
+        setSelectedExportContent("export");
       } else {
         setSelectedContent("");
         setSelectedHelperContent("");
+        setSelectedExportContent("");
         setSelectedDrivenContent("driven")
       }
   };
@@ -187,6 +206,13 @@ function App(props: PositioningProps) {
     <div id='helper' role="tabpanel" aria-labelledby="Helper">
       <div id='action' className='header'>
       </div>
+    </div>
+  ));
+
+  const Export = React.memo(() => (
+    <div id='exports' role="tabpanel" aria-labelledby="Export">
+      <br/>
+      <ExportContent/>
     </div>
   ));
 
@@ -299,6 +325,24 @@ function App(props: PositioningProps) {
       </div>
     ));
 
+    const ExportContent = React.memo(() => (
+      <div id='exportcontent'>
+        <Subtitle1 id='content2'>Upload selected Frames to Sharepoint</Subtitle1>
+        <br/>
+        <Label id='subheading' htmlFor={m365Token}>Auth Token*</Label>
+        <Input name='m365token' type='password' appearance='outline' id={m365Token} />
+        <br/>
+        <Label id='subheading' htmlFor={m365SiteID}>SiteId or SharePoint Hostname*</Label>
+        <Input name='m365siteid' type='text' appearance='outline' id={m365SiteID} />
+        <br/>
+        <Label id='subheading' htmlFor={m365Path}>Folder Path*</Label>
+        <Input name='m365path' type='text' appearance='outline' id={m365Path} />
+        <br/>
+        <br/>
+        <Button id='buttonE' appearance='primary' onClick={() => onCreate("doc")}>UPLOAD</Button>
+      </div>
+    ));
+
   
     return (
       <div id='upper'>
@@ -313,6 +357,7 @@ function App(props: PositioningProps) {
             <Tab id='Driven' value="driven">Model Driven</Tab>
             <Tab id='Flow' value="flow">Flow</Tab>
             <Tab id='Helper' value="helper">Helper</Tab>
+            <Tab id='Exports' value="exports">Export</Tab>
         </TabList>
 
         <div>
@@ -320,6 +365,7 @@ function App(props: PositioningProps) {
           {selectedValue === "driven" && <Driven />}
           {selectedValue === "flow" && <Flow />}
           {selectedValue === "helper" && <Helper />}
+          {selectedValue === "exports" && <Export />}
         </div>
 
         <div>
@@ -327,6 +373,7 @@ function App(props: PositioningProps) {
         {selectedContent === "jsoncontent" && <JSONContent />}
         {selectedContent === "yamlcontent" && <YamlContent />}
         {selectedDrivenContent === "xmlcontent" && <XMLContent />}
+        {selectedExportContent === "exportcontent" && <ExportContent />}
         </div>
 
         <div>
@@ -335,7 +382,7 @@ function App(props: PositioningProps) {
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 1.0</Subtitle1>
+          <Subtitle1 id='footerText2'>version 1.1</Subtitle1>
         </div>
     </div>
     );

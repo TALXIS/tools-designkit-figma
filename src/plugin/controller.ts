@@ -10,13 +10,38 @@ import { parseFlow } from "./PowerAutomate/parsers/flowParser";
 import { parseModelDrivenScreen } from "./ModelDriven/parsers/modelDrivenParser";
 import { importXMLFiles } from "./ModelDriven/importers/xml-importer";
 import { importJSONtoGrid, importMockarooToGrid } from "./ModelDriven/importers/json-data-importer";
+import { fillScreensToArrayForExport } from "./functions/generalFunctions";
+import { uploadScreensToSharePoint } from "./functions/networkFunctions";
 
 figma.showUI(__html__);
 figma.ui.resize(400, 610);
 
 
 figma.ui.onmessage = async msg => {
+  if(msg.type == "doc") {
+    const token = msg.m365T;
+    const siteId = msg.m365S;
+    const path = msg.m365P;
 
+    if(token == "" && path == "" && siteId == "") {
+      figma.notify("Please fill all mandatory fields");
+      return;
+    }
+    
+    const screenExports = await fillScreensToArrayForExport();
+    if(screenExports == undefined){
+      figma.notify("Please select Frame");
+      return;
+    }
+
+    figma.notify("Upload Started...",{timeout: 1000,button: {text: "Cancel",action() {
+      return;
+    }},onDequeue(reason) {
+      uploadScreensToSharePoint(screenExports,token,siteId,path);
+    },});
+    
+    return;
+  }
   
   if(msg.type == "export") {
     const nodes = figma.currentPage.selection;
