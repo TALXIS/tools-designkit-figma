@@ -18,6 +18,10 @@ figma.ui.resize(400, 610);
 
 
 figma.ui.onmessage = async msg => {
+  if(msg.type == "notfound") {
+    figma.notify("Customizations.xml file not found!");
+    return;
+  }
   if(msg.type == "doc") {
     const token = msg.m365T;
     const siteId = msg.m365S;
@@ -54,7 +58,7 @@ figma.ui.onmessage = async msg => {
     (async() => {
       await loadFonts();
     })().then(() => {
-      const modelDrivenScreens = importXMLFiles(msg.filesContent,false);
+      const modelDrivenScreens = importXMLFiles(msg.data);
       if(modelDrivenScreens != undefined && modelDrivenScreens.length > 0) {
         modelDrivenScreens.forEach(modelDrivenScreen => {
           parseModelDrivenScreen(modelDrivenScreen);

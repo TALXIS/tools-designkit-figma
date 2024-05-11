@@ -14,6 +14,20 @@ const redesignPNG: string = require("../assets/redesign.png").default;
 const exportPNG: string = require("../assets/export.png").default;
 const movePNG: string = require("../assets/move.png").default;
 
+function fileCheck(event:any) {
+  const file = event.target.files[0];
+  var zip = new JSZip();
+  zip.loadAsync(file).then(async function (zip) {
+      const f = zip.file("customizations.xml");
+      if(f == undefined || null) {
+          parent.postMessage({ pluginMessage: { type: 'notfound' } }, '*');
+          return;
+      }
+
+      const data = await f.async("string");
+      parent.postMessage({ pluginMessage: { type: 'import-xml',data } }, '*');
+  });
+}
 
 function App(props: PositioningProps) {
 
@@ -40,12 +54,6 @@ function App(props: PositioningProps) {
     accept: '.json',
     onFilesSelected: ({ filesContent }) => {
       parent.postMessage({ pluginMessage: { type: 'import-flow', filesContent } }, '*');
-    },
-  });
-  const drivenPicker = useFilePicker({
-    accept: '.xml',
-    onFilesSelected: ({ filesContent }) => {
-      parent.postMessage({ pluginMessage: { type: 'import-xml', filesContent } }, '*');
     },
   });
   const jsonPicker = useFilePicker({
@@ -266,11 +274,12 @@ function App(props: PositioningProps) {
     <div id='xmlcontent'>
       <Subtitle1 id='content'>Import the "customization.xml" File</Subtitle1>
       <br />
-      <br />
-      <Button appearance="primary" id='files' onClick={() => drivenPicker.openFilePicker()}>Add File</Button>
-      <br />
+      <label htmlFor="filePicker" className="custom-file-upload">+ADD FILE</label>
+      <input type="file" id="filePicker" accept=".zip" onChange={(event) => {fileCheck(event);}} />
       <br />
       <ColoredLine2 color="#C2C8D7" />
+      <Subtitle1 id='content'>Fake Data Generator</Subtitle1>
+      <br />
       <Checkbox checked={mockarooValue} label="Mockaroo API" onChange={onChecked} />
       <br />
       {mockarooValue === false && (

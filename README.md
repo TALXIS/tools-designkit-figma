@@ -28,7 +28,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 ## ⚡️ Roadmap
 - [x] Add Import/Export for the Canvas Apps
 - [x] Add Helper screen - Canvas templates
-- [x] Import Model Driven app
+- [x] Import Model Driven Solution file
 - [x] Import of Power Automate
 - [x] New UI for Power Automate Flow (after the Easter holiday)
 - [x] Import own JSON data for Model Driven Grid

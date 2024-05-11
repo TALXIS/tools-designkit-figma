@@ -9,7 +9,7 @@ import { Entity, EntityAttribute, EntityInfoType, EntityInfoTypeEntity } from ".
 import { Guid } from "typescript-guid";
 
 
-export function importXMLFiles(files: any[],fromGit: boolean) {
+export function importXMLFiles(file: any) {
     const modelDrivenScreens: ModelDrivenScreen[] = []; 
     var convert = require('xml-js');
     
@@ -22,39 +22,36 @@ export function importXMLFiles(files: any[],fromGit: boolean) {
     };
     const parser = new XMLParser(options);
     const builder = new XMLBuilder({ignoreAttributes: false,format: true, suppressBooleanAttributes: false, suppressEmptyNode: true, suppressUnpairedNode: false});
-    for (let index = 0; index < files.length; index++) {
-        const file = files[index];
-        let jObj = fromGit == false ? parser.parse(file.content) : parser.parse(file);
-       
-        const xmlContent = builder.build(jObj);
 
-        var json = convert.xml2json(xmlContent, {compact: true, spaces: 4});
-        const output =JSON.parse(json);
+    let jObj = parser.parse(file);
+    
+    const xmlContent = builder.build(jObj);
 
-        if(output != undefined || output != null) {
-            const parentObject = output.ImportExportXml;
+    var json = convert.xml2json(xmlContent, {compact: true, spaces: 4});
+    const output =JSON.parse(json);
+
+    if(output != undefined || output != null) {
+        const parentObject = output.ImportExportXml;
+        
+        if(parentObject != undefined) {
+            const optionSets: OptionSets[] = [];
+
+            loadOptionSets(parentObject.optionsets,optionSets);
             
-            if(parentObject != undefined) {
-                const optionSets: OptionSets[] = [];
+            const siteMap = loadSiteMap(parentObject.AppModuleSiteMaps);
+            const entity = loadEntity(parentObject.Entities);
+            const savedQuery = loadSavedQuery(parentObject.Entities);
+            const form = loadForm(parentObject.Entities);
 
-                loadOptionSets(parentObject.optionsets,optionSets);
-                
-                const siteMap = loadSiteMap(parentObject.AppModuleSiteMaps);
-                const entity = loadEntity(parentObject.Entities);
-                const savedQuery = loadSavedQuery(parentObject.Entities);
-                const form = loadForm(parentObject.Entities);
+            if(entity != undefined && siteMap != undefined) {
+                const appName = parentObject.AppModules.AppModule.UniqueName._text;
+                const modelDrivenScreen = new ModelDrivenScreen(entity,siteMap,savedQuery,optionSets,form,appName);
+                modelDrivenScreens.push(modelDrivenScreen);
 
-                if(entity != undefined && siteMap != undefined) {
-                    const appName = parentObject.AppModules.AppModule.UniqueName._text;
-                    const modelDrivenScreen = new ModelDrivenScreen(entity,siteMap,savedQuery,optionSets,form,appName);
-                    modelDrivenScreens.push(modelDrivenScreen);
+            } else figma.notify("Imported XML has undefined Entity or SiteMap");
 
-                } else figma.notify("Imported XML has undefined Entity or SiteMap");
-
-            } else figma.notify("Imported XML does not contain 'ImportExportXml' tag");
-        } else figma.notify("Imported XML is undefined");
-
-    }
+        } else figma.notify("Imported XML does not contain 'ImportExportXml' tag");
+    } else figma.notify("Imported XML is undefined");
     return modelDrivenScreens;
 }
 
