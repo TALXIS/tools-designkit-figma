@@ -1,18 +1,22 @@
 import React, { ChangeEvent } from 'react';
 import '../styles/ui.css';
-import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData, Title1,
-  RadioGroup,Radio,RadioGroupOnChangeData, Textarea, useId, CheckboxOnChangeData, Checkbox, Input, Dropdown, Option} from '@fluentui/react-components';
+import { exportPNG, importPNG, logo, movePNG, redesignPNG, vacation } from './consts';
+import { ColoredLine2 } from './UI/uiComps';
+import Canvas from './Canvas/canvas';
+import Export from './Export/export';
+import Flow from './Flow/flow';
+import JSONContent from './Canvas/jsonContent';
+
+import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData,RadioGroupOnChangeData, Textarea, 
+  useId, CheckboxOnChangeData, Checkbox, Input, Dropdown, Option} from '@fluentui/react-components';
 
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { useFilePicker } from 'use-file-picker';
-
-const logo: string = require("../assets/logo.png").default;
-const vacation: string = require("../assets/vacation.png").default;
-const importPNG: string = require("../assets/import.png").default;
-const redesignPNG: string = require("../assets/redesign.png").default;
-const exportPNG: string = require("../assets/export.png").default;
-const movePNG: string = require("../assets/move.png").default;
+import YamlContent from './Canvas/yamlContent';
+import Helper from './Helper/helper';
+import TemplateContent from './Helper/templateContent';
+import Driven from './ModelDriven/driven';
 
 function fileCheck(event:any) {
   const file = event.target.files[0];
@@ -38,7 +42,6 @@ function App(props: PositioningProps) {
   const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
   const [mockarooValue, setMockarooValue] = React.useState(false);
-  const [selectedExportContent, setSelectedExportContent] = React.useState("");
 
   const grid = useId("area-grid");
   const apikey = useId("input-key");
@@ -104,35 +107,10 @@ function App(props: PositioningProps) {
     }
   });
 
-
-  const onCreate = (type: string) => {
-    if (type == "exportYaml") parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
-    if(type == "tempVac") parent.postMessage({ pluginMessage: { type: 'tempVac' } }, '*');
-    if(type == "tempLeg") parent.postMessage({ pluginMessage: { type: 'tempLeg',importPNG, redesignPNG,exportPNG,movePNG } }, '*');
-    if(type == "grid") {
-      const data = document.getElementsByName("grid")[0].innerHTML;
-      parent.postMessage({ pluginMessage: { type: 'grid',data } }, '*');
-    }
-    if(type == "mockaroo") {
-      const apiVal = document.getElementsByName("key")[0].getAttribute("value");
-      const endVal = document.getElementsByName("endpoint")[0].getAttribute("value");
-      const langVal = document.getElementsByName("language")[0].innerText;
-      const outVal = document.getElementsByName("output")[0].innerText;
-      parent.postMessage({ pluginMessage: { type: 'mockaroo',apiVal,endVal,langVal,outVal } }, '*');
-    }
-    if(type == "doc") {
-      const m365T = document.getElementsByName("m365token")[0].getAttribute("value");
-      const m365S = document.getElementsByName("m365siteid")[0].getAttribute("value");
-      const m365P = document.getElementsByName("m365path")[0].getAttribute("value");
-      parent.postMessage({ pluginMessage: { type: 'doc',m365T,m365S,m365P } }, '*');
-    }
-  };
-
   const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
       setSelectedValue(data.value);
       if (data.value == "canvas") {
         setSelectedHelperContent("");
-        setSelectedExportContent("");
         if (value == "yaml") {
           setSelectedContent("yamlcontent")
         } else {
@@ -140,20 +118,16 @@ function App(props: PositioningProps) {
         }
       } else if(data.value == "flow") {
         setSelectedHelperContent("");
-        setSelectedExportContent("");
         setSelectedContent("flow")
       } else if (data.value == "helper") {
         setSelectedContent("");
-        setSelectedExportContent("");
         setSelectedHelperContent("template");
       } else if(data.value == "exports") {
         setSelectedContent("");
         setSelectedHelperContent("");
-        setSelectedExportContent("export");
       } else {
         setSelectedContent("");
         setSelectedHelperContent("");
-        setSelectedExportContent("");
         setSelectedDrivenContent("driven")
       }
   };
@@ -172,187 +146,6 @@ function App(props: PositioningProps) {
     const bool = data.checked as boolean;
     setMockarooValue(bool);
   }
-
-
-  const ColoredLine2 = ({ color }: {color: string}) => (
-    <hr
-        style={{
-            border: '1px dashed ' + color,
-            color: color,
-            backgroundColor: color,
-            height: 0.2,
-            width: 333,
-            marginTop: 10
-        }}
-    />
-  );
-  
-  const Horizontal = () => (
-    <RadioGroup className='header2' value={value} layout="horizontal" onChange={onOptionChange}>
-      <Radio value="json" label="JSON" />
-      <Radio value="yaml" label="YAML" />
-    </RadioGroup>
-  );
-
-  const Canvas = React.memo(() => (
-    <div id='canvas' role="tabpanel" aria-labelledby="Canvas">
-      <div id='action' className='header'>
-        <Title1 id='action'>ACTION</Title1>
-        <Horizontal />
-      </div>
-    </div>
-  ));
-
-  const Driven = React.memo(() => (
-    <div id='flow' role="tabpanel" aria-labelledby="Model Driven">
-      <br/>
-      <XMLContent/>
-    </div>
-  ));
-
-  const Helper = React.memo(() => (
-    <div id='helper' role="tabpanel" aria-labelledby="Helper">
-      <div id='action' className='header'>
-      </div>
-    </div>
-  ));
-
-  const Export = React.memo(() => (
-    <div id='exports' role="tabpanel" aria-labelledby="Export">
-      <br/>
-      <ExportContent/>
-    </div>
-  ));
-
-  const TemplateContent = React.memo(() => (
-    <div id='template'>
-      <Subtitle1 id='content2'>Canvas Template - Vacation</Subtitle1>
-      <Image id='logo' className='img2' src={vacation} height={140} width={235} />
-      <Button appearance="primary" onClick={() => onCreate("tempVac")}>Select</Button>
-      <br />
-      <Subtitle1 id='content2'>How to Use</Subtitle1>
-      <Subtitle1 id='dscr2'>Click and see functionality<br/> of the plugin</Subtitle1>
-      <Button appearance="primary" id='submit' onClick={() => onCreate("tempLeg")}>Select</Button>
-    </div>
-  ));
-
-  const FlowContent = React.memo(() => (
-    <div id='flowcontent'>
-      <Subtitle1 id='content'>Import "definition.json" file</Subtitle1>
-      <br />
-      <br />
-      <Button appearance="primary" id='files' onClick={() => flowPicker.openFilePicker()}>Add File</Button>
-    </div>
-  ));
-
-  const JSONContent = React.memo(() => (
-    <div id='jsoncontent'>
-      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
-      <br />
-      <br />
-      <Button appearance="primary" id='files' onClick={() => jsonPicker.openFilePicker()}>Add File(s)</Button>
-    </div>
-  ));
-
-  const YamlContent = React.memo(() => (
-    <div id='yamlcontent'>
-      <Subtitle1 id='content'>Import the File(s)</Subtitle1>
-      <br />
-      <br />
-      <Button appearance="primary" id='files' onClick={() => yamlPicker.openFilePicker()}>Add File(s)</Button>
-      <br />
-      <br />
-      <br />
-      <Subtitle1 id='content'>Export selected Frame(s)</Subtitle1>
-      <br />
-      <br />
-      <Button appearance="primary" onClick={() => onCreate("exportYaml")}>Export</Button>
-    </div>
-  ));
-
-  const XMLContent = React.memo(() => (
-    <div id='xmlcontent'>
-      <Subtitle1 id='content'>Import the "customization.xml" File</Subtitle1>
-      <br />
-      <label htmlFor="filePicker" className="custom-file-upload">+ADD FILE</label>
-      <input type="file" id="filePicker" accept=".zip" onChange={(event) => {fileCheck(event);}} />
-      <br />
-      <ColoredLine2 color="#C2C8D7" />
-      <Subtitle1 id='content'>Fake Data Generator</Subtitle1>
-      <br />
-      <Checkbox checked={mockarooValue} label="Mockaroo API" onChange={onChecked} />
-      <br />
-      {mockarooValue === false && (
-        <span>
-          <Subtitle1 id='content'>Import JSON data for Grid</Subtitle1>
-          <Textarea id={grid} appearance='outline' className='grid' name='grid' />
-          <br />
-          <br />
-          <Button appearance="primary" onClick={() => onCreate("grid")}>GENERATE</Button>
-        </span>
-      )}
-      {mockarooValue === true && (
-          <div id='gitcontent'>
-            <div id='gitcontent2'>
-              <div className='col-2'>
-                <Label id='subheading' htmlFor={apikey}>X-API-KEY *</Label>
-                <Input className='inp' name='key' type='password' appearance='outline' id={apikey} />
-              </div>
-              <div className='col-2'>
-                <Label id='subheading' htmlFor={language}>Language *</Label>
-                <Dropdown name='language' style={{ minWidth: '166px' }} aria-labelledby={language} appearance="outline" defaultValue="en-US">
-                  <Option>en-US</Option>
-                  <Option>en-GB</Option>
-                  <Option>cs-CZ</Option>
-                </Dropdown>
-              </div>
-            </div>
-            <div id='gitcontent2'>
-              <div className='col-2'>
-                <Label id='subheading' htmlFor={endpoint}>Endpoint *</Label>
-                <Input name='endpoint' className='inp' type='text' appearance='outline' id={endpoint} />
-                </div>
-                <div className='col-2'>
-                  <Label id='subheading' htmlFor={output}>Output *</Label>
-                  <Dropdown name='output' style={{ minWidth: '166px' }} aria-labelledby={output} appearance="outline" defaultValue="View">
-                    <Option>View</Option>
-                    <Option>Form</Option>
-                  </Dropdown>    
-              </div>
-            </div>
-            <br />
-            <Button appearance="primary" onClick={() => onCreate("mockaroo")}>GENERATE</Button>
-          </div>
-
-      )}
-    </div>
-  ));
-    const Flow = React.memo(() => (
-      <div id='flow' role="tabpanel" aria-labelledby="Flow">
-        <br/>
-        <FlowContent/>
-      </div>
-    ));
-
-    const ExportContent = React.memo(() => (
-      <div id='exportcontent'>
-        <Subtitle1 id='content2'>Upload selected Frames to Sharepoint</Subtitle1>
-        <br/>
-        <Label id='subheading' htmlFor={m365Token}>Auth Token*</Label>
-        <Input name='m365token' type='password' appearance='outline' id={m365Token} />
-        <br/>
-        <Label id='subheading' htmlFor={m365SiteID}>SiteId or SharePoint Hostname*</Label>
-        <Input name='m365siteid' type='text' appearance='outline' id={m365SiteID} />
-        <br/>
-        <Label id='subheading' htmlFor={m365Path}>Folder Path*</Label>
-        <Input name='m365path' type='text' appearance='outline' id={m365Path} />
-        <br/>
-        <br/>
-        <Button id='buttonE' appearance='primary' onClick={() => onCreate("doc")}>UPLOAD</Button>
-      </div>
-    ));
-
-  
     return (
       <div id='upper'>
         <div className='middle'>
@@ -370,28 +163,26 @@ function App(props: PositioningProps) {
         </TabList>
 
         <div>
-          {selectedValue === "canvas" && <Canvas />}
-          {selectedValue === "driven" && <Driven />}
-          {selectedValue === "flow" && <Flow />}
+          {selectedValue === "canvas" && <Canvas value={value} onOptionChange={onOptionChange}  />}
+          {selectedValue === "driven" && <Driven mockarooValue={mockarooValue} onChecked={onChecked} grid={grid} apikey={apikey} 
+            language={language} endpoint={endpoint} output={output} />}
+          {selectedValue === "flow" && <Flow flowPicker={flowPicker} />}
           {selectedValue === "helper" && <Helper />}
-          {selectedValue === "exports" && <Export />}
+          {selectedValue === "exports" && <Export m365Token={m365Token} m365SiteID={m365SiteID} m365Path={m365Path} />}
         </div>
 
         <div>
-        {selectedContent === "flowcontent" && <FlowContent />}
-        {selectedContent === "jsoncontent" && <JSONContent />}
-        {selectedContent === "yamlcontent" && <YamlContent />}
-        {selectedDrivenContent === "xmlcontent" && <XMLContent />}
-        {selectedExportContent === "exportcontent" && <ExportContent />}
+        {selectedContent === "jsoncontent" && <JSONContent jsonPicker={jsonPicker} />}
+        {selectedContent === "yamlcontent" && <YamlContent yamlPicker={yamlPicker} />}
         </div>
 
         <div>
-          {selectedHelperContent === "template" && <TemplateContent />}
+          {selectedHelperContent === "template" && <TemplateContent vacation={vacation} />}
         </div>
 
         <div id='footer'>
           <Subtitle1 id='footerText'>developed 2024 </Subtitle1>
-          <Subtitle1 id='footerText2'>version 1.1</Subtitle1>
+          <Subtitle1 id='footerText2'>version 1.2</Subtitle1>
         </div>
     </div>
     );
