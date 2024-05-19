@@ -12,8 +12,10 @@ export function parseScreen(screen: Screen,allScreens: ScreenSaver) {
     const frame = figma.createFrame();
     screenVal = screen;
 
+    const resize = getMaxWidthHeight(screen);
+    
     frame.name = screen.name;
-    frame.resize(Number(640),Number(1136));
+    frame.resize(Number(resize.w),Number(resize.h));
     frame.cornerRadius = 20;
     if(screen.fill != "") {
         var {r,g,b} = rgbaToRgb(screen.fill);
