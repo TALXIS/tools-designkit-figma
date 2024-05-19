@@ -123,6 +123,43 @@ export function getValue(screen: Screen, value: string) {
   return "";
 }
 
+export function getMaxWidthHeight(screen: Screen) {
+  let maxWidth = 0;
+  let maxHeight = 0;
+  screen.fields.forEach(field => {
+    let x = 0;
+    let y = 0;
+    let w = 0;
+    let h = 0;
+    field.properties.forEach(prop => {
+      if (prop.key.includes("X")) {
+        const val = prop.value.includes("=") ? prop.value.split("=")[1].replace("'",""): prop.value;
+        x = Number(val);
+      }
+      if (prop.key.includes("Y")) {
+        const val = prop.value.includes("=") ? prop.value.split("=")[1].replace("'",""): prop.value;
+        y = Number(val);
+      }
+      if (prop.key.includes("Width")) {
+        const val = prop.value.includes("=") ? prop.value.split("=")[1].replace("'",""): prop.value;
+        w = Number(val);
+      }
+      if (prop.key.includes("Height")) {
+        const val = prop.value.includes("=") ? prop.value.split("=")[1].replace("'",""): prop.value;
+        h = Number(val);
+      }
+    });
+    const wVal = x+ w;
+    const hVal = y+ h;
+    if(maxWidth < wVal) {
+      maxWidth = wVal;
+    } 
+    if(maxHeight < hVal) {
+      maxHeight = hVal;
+    }
+  });
+  return {w: maxWidth+50,h: maxHeight+50};
+}
 /**
  * Append a svg icon to the frame
  * @date 22/12/2023 - 08:06:04
