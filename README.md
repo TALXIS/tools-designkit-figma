@@ -36,6 +36,7 @@ If wish to use this project for your team, please get in touch with us at info@m
 - [x] Generate JSON data from Mockaroo API with possibility to View or Form
 - [x] Upload selected Figma frames on SharePoint via GraphAPI
 - [x] Performance package in webpack applied
+- [x] Dynamic size of screen by Canvas layout - Mobile,Tablet 
 
 ## 🔥 Contribute
 * Run `npm ci` to install dependencies.
