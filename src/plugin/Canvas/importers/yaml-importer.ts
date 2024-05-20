@@ -105,7 +105,7 @@ export function importYAMLFiles(files: any[],fromGit: boolean) {
             fields.push(fld);
         }
 
-        const scrn = new Screen(screenName,screenFill,fields,forms);
+        const scrn = new Screen(screenName,0,0,screenFill,fields,forms);
         screens.push(scrn);
 
     }

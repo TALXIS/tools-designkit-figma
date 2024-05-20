@@ -52,7 +52,7 @@ export default function Driven ({
         <div id='flow' role="tabpanel" aria-labelledby="Model Driven">
             <br/>
             <div id='xmlcontent'>
-                <Subtitle1 id='content'>Import the "customization.xml" File</Subtitle1>
+                <Subtitle1 id='content'>Import the Solution ZIP File</Subtitle1>
                 <br />
                 <label htmlFor="filePicker" className="custom-file-upload">+ADD FILE</label>
                 <input type="file" id="filePicker" accept=".zip" onChange={(event) => {fileCheck(event);}} />

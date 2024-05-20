@@ -1,45 +1,28 @@
 import React, { ChangeEvent } from 'react';
 import '../styles/ui.css';
-import { exportPNG, importPNG, logo, movePNG, redesignPNG, vacation } from './consts';
-import { ColoredLine2 } from './UI/uiComps';
+import { logo, vacation } from './consts';
 import Canvas from './Canvas/canvas';
 import Export from './Export/export';
 import Flow from './Flow/flow';
 import JSONContent from './Canvas/jsonContent';
-
-import {Button,PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData,RadioGroupOnChangeData, Textarea, 
-  useId, CheckboxOnChangeData, Checkbox, Input, Dropdown, Option} from '@fluentui/react-components';
-
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import { useFilePicker } from 'use-file-picker';
 import YamlContent from './Canvas/yamlContent';
 import Helper from './Helper/helper';
 import TemplateContent from './Helper/templateContent';
 import Driven from './ModelDriven/driven';
 
-function fileCheck(event:any) {
-  const file = event.target.files[0];
-  var zip = new JSZip();
-  zip.loadAsync(file).then(async function (zip) {
-      const f = zip.file("customizations.xml");
-      if(f == undefined || null) {
-          parent.postMessage({ pluginMessage: { type: 'notfound' } }, '*');
-          return;
-      }
+import {PositioningProps, Subtitle1,Image,Label,Tab, TabList,TabValue, SelectTabEvent, SelectTabData,RadioGroupOnChangeData, 
+  useId, CheckboxOnChangeData} from '@fluentui/react-components';
 
-      const data = await f.async("string");
-      parent.postMessage({ pluginMessage: { type: 'import-xml',data } }, '*');
-  });
-}
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { useFilePicker } from 'use-file-picker';
 
 function App(props: PositioningProps) {
 
   const [selectedValue, setSelectedValue] = React.useState<TabValue>("canvas");
 
-  const [value, setValue] = React.useState("json");
-  const [selectedContent, setSelectedContent] = React.useState("jsoncontent");
-  const [selectedDrivenContent, setSelectedDrivenContent] = React.useState("");
+  const [value, setValue] = React.useState("msapp");
+  const [selectedContent, setSelectedContent] = React.useState("msappcontent");
   const [selectedHelperContent, setSelectedHelperContent] = React.useState("");
   const [mockarooValue, setMockarooValue] = React.useState(false);
 
@@ -59,12 +42,7 @@ function App(props: PositioningProps) {
       parent.postMessage({ pluginMessage: { type: 'import-flow', filesContent } }, '*');
     },
   });
-  const jsonPicker = useFilePicker({
-    accept: '.json',
-    onFilesSelected: ({ filesContent }) => {
-      parent.postMessage({ pluginMessage: { type: 'import-json', filesContent } }, '*');
-    },
-  });
+
   const yamlPicker = useFilePicker({
     accept: '.yaml',
     onFilesSelected: ({ filesContent }) => {
@@ -114,7 +92,7 @@ function App(props: PositioningProps) {
         if (value == "yaml") {
           setSelectedContent("yamlcontent")
         } else {
-          setSelectedContent("jsoncontent");
+          setSelectedContent("msappcontent");
         }
       } else if(data.value == "flow") {
         setSelectedHelperContent("");
@@ -128,7 +106,6 @@ function App(props: PositioningProps) {
       } else {
         setSelectedContent("");
         setSelectedHelperContent("");
-        setSelectedDrivenContent("driven")
       }
   };
 
@@ -139,7 +116,7 @@ function App(props: PositioningProps) {
       setSelectedContent("yamlcontent")
       return;
     }
-    setSelectedContent("jsoncontent");
+    setSelectedContent("msappcontent");
   }
 
   const onChecked = (ev: ChangeEvent<HTMLInputElement>, data: CheckboxOnChangeData) => {
@@ -172,7 +149,7 @@ function App(props: PositioningProps) {
         </div>
 
         <div>
-        {selectedContent === "jsoncontent" && <JSONContent jsonPicker={jsonPicker} />}
+        {selectedContent === "msappcontent" && <JSONContent />}
         {selectedContent === "yamlcontent" && <YamlContent yamlPicker={yamlPicker} />}
         </div>
 

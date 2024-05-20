@@ -1,6 +1,6 @@
 import { Field, Screen,Props,Form } from '../../../model/Canvas/Screen';
 import { ScreenSaver } from '../../../model/Canvas/ScreenSaver';
-import { findLastX, findPropertyValueFromScreens, findPropertyValuebyName, getValue, showIcon } from '../../../util/utils';
+import { findLastX, findPropertyValueFromScreens, findPropertyValuebyName, getMaxWidthHeight, getValue, showIcon } from '../../../util/utils';
 import { getFontName } from '../importers/font-importer';
 import {hexToRGBA, hexToRgb, invertColor, rgbToHex, rgbaToRgb, rgbaToRgbWithOpacity, shadeColor,threeHexToRGB} from '../../../util/colorUtil';
 

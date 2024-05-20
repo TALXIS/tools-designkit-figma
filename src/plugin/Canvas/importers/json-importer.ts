@@ -1,11 +1,19 @@
 import { Field, Form, Props, Screen } from "../../../model/Canvas/Screen";
 
-export function importJSONFiles(files: any[],fromGit: boolean) {
+export function importJSONFiles(files: any[],fileProperty: string) {
     const screens : Screen[] = [];
     for (let index = 0; index < files.length; index++) {
         const json = files[index];
 
-        const topParent = fromGit == true ? JSON.parse(json) : JSON.parse(json.content);
+        let width = 0;
+        let height = 0;
+        if(fileProperty != "") {
+            const size = fillScreenSize(fileProperty);
+            width = Number(size.w);
+            height = Number(size.h);
+        }
+
+        const topParent = JSON.parse(json);
         const screenName = topParent.TopParent.Name;
 
         var screenFill = "";
@@ -64,7 +72,7 @@ export function importJSONFiles(files: any[],fromGit: boolean) {
             const field = new Field(fieldName,fieldType,props);
             fields.push(field);
         }
-        const scrn = new Screen(screenName,screenFill,fields,forms);
+        const scrn = new Screen(screenName,width,height,screenFill,fields,forms);
         screens.push(scrn);
     }
     return screens;
@@ -152,4 +160,12 @@ function loadGallery(childGallery: any, element: any) {
         galProps.push(galP);
     }
     return { galFields, galProps };
+}
+
+function fillScreenSize(fileProperty: string) {
+    const json = JSON.parse(fileProperty);
+    const widthProp = json.DocumentLayoutWidth;
+    const heightProp = json.DocumentLayoutHeight;
+
+    return {w: widthProp, h: heightProp};
 }

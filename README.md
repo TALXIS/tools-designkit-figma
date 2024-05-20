@@ -23,10 +23,13 @@ If wish to use this project for your team, please get in touch with us at info@m
 ## 🎉 Features
 - Export selected Frame in Figma to the separated XML files (AppModule, Entity, SavedQuery, Form) as a zip file
 - Export pre-created Collections from your local variables in Figma to the XML (OptionSet)
-- Add Import/Export for the Canvas Apps (manual is here - https://medium.com/@lukas.lp.pavelka/power-apps-imex-version-2-0-5fd2ab229262)
+- Add Import/Export for the Canvas Apps 
+
+## 📄 Documentation
+* https://coda.io/@mycondy/designkit-for-figma
 
 ## ⚡️ Roadmap
-- [x] Add Import/Export for the Canvas Apps
+- [x] Add Import/Export for the Canvas Apps - MSAPP/YAML
 - [x] Add Helper screen - Canvas templates
 - [x] Import Model Driven Solution file
 - [x] Import of Power Automate

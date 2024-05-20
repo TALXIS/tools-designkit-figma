@@ -15,7 +15,7 @@ export default function Canvas ({
             <div id='action' className='header'>
                 <Title1 id='action'>ACTION</Title1>
                 <RadioGroup className='header2' value={value} layout="horizontal" onChange={onOptionChange}>
-                    <Radio value="json" label="JSON" />
+                    <Radio value="msapp" label="MSAPP" />
                     <Radio value="yaml" label="YAML" />
                 </RadioGroup>
             </div>

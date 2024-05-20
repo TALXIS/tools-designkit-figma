@@ -2,12 +2,16 @@ import { IScreen, IField, IProps, IForm } from "./interfaces/IScreen";
 
 export class Screen implements IScreen {
     name: string;
+    width: number;
+    height: number;
     fill: string;
     fields: Field[];
     forms?: Form[] | undefined; 
     
-    constructor(name: string,fill: string, fields: Field[],forms?: Form[]) {
+    constructor(name: string,width: number, height: number,fill: string, fields: Field[],forms?: Form[]) {
         this.name = name;
+        this.width = width;
+        this.height = height;
         this.fill = fill;
         this.fields = fields;
         this.forms = forms;

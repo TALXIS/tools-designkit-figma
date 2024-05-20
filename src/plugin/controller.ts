@@ -72,7 +72,8 @@ figma.ui.onmessage = async msg => {
     (async() => {
       await loadFonts();
     })().then(() => {
-      const screens = importJSONFiles(msg.filesContent,false);
+      const fileProperty = msg.fileProperty;
+      const screens = importJSONFiles(msg.filesContent,fileProperty);
       
       if(screens != undefined) {
         const saver = new ScreenSaver(screens);

@@ -1,5 +1,7 @@
 export interface IScreen {
     name : string;
+    width: number;
+    height: number;
     fill: string;
     fields: IField[];
     forms?: IForm[] |  undefined;
