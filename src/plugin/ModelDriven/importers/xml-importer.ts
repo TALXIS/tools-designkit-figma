@@ -64,36 +64,51 @@ function loadOptionSets(optionsets: any, options: OptionSets[]) {
                 options.push(addOptionValues(el));
             });
         } else {
+            if(sets == undefined) return;
             options.push(addOptionValues(sets));
         }
         createCollections(options);
     }
 }
+
 function addOptionValues(element: any): OptionSets {
     const optionSetTypes: OptionSetType[] = [];
     const atributes = element._attributes;
     const name = atributes.Name;
     const displayName = atributes.localizedName;
-    const description = element.Descriptions.Description._attributes.description;
-    const display = element.displaynames.displayname._attributes.description;
-    
+    const description = element.Descriptions.Description == undefined ? "" : element.Descriptions.Description._attributes.description;
+
+    const displayes = element.displaynames.displayname;
+    const atributeDesciptions : AttributeDescription[] =[];
+    if(Array.isArray(displayes)) {
+        displayes.forEach(element => {
+            atributeDesciptions.push(new AttributeDescription(element._attributes.description,element._attributes.languagecode));
+        });
+    } else atributeDesciptions.push(new AttributeDescription(displayes._attributes.description,"1033"));
+
     const optionValues: OptionstypeOption[] = [];
     const opts = element.options.option;
-
+    
     if(opts != undefined) {
         opts.forEach((el: any) => {
             const value = el._attributes.value;
             const color = el._attributes.Color;
-            const label = el.labels.label._attributes.description;
-
-            const optLabel = new OptionSetLabel(new AttributeDescription(label,"1033"));
+            const labels = el.labels.label;
+            
+            const labelDesciptions : AttributeDescription[] =[];
+            if(Array.isArray(labels)) {
+                labels.forEach(element => {
+                    labelDesciptions.push(element._attributes.description,element._attributes.languagecode);
+                });
+            } else labelDesciptions.push(new AttributeDescription(labels._attributes.description,"1033"));
+            const optLabel = new OptionSetLabel(labelDesciptions);
 
             const opt = new OptionstypeOption(value,optLabel,undefined,color);
             optionValues.push(opt);
         });
     }
     
-    const displayParam = new DisplayNameParam(new AttributeDescription(display, "1033"));
+    const displayParam = new DisplayNameParam(atributeDesciptions);
     const descriptionParam = new DescriptionParam(new AttributeDescription(description, "1033"));
     const optionSetType = new OptionSetType(name,displayName, OptionSetEnumType.picklist, TrueFalse01Type.Item1, "1.0.0.0", displayParam, descriptionParam, optionValues);
     
@@ -145,14 +160,27 @@ function loadSiteMap(AppModuleSiteMaps: any) {
 
         if(moduleSiteMap != undefined) {
             const uniqueName = moduleSiteMap.SiteMapUniqueName._text;
-            const showHome = moduleSiteMap.ShowHome._text == "True" ? true : false;
-            const showPinned = moduleSiteMap.ShowPinned._text == "True" ? true : false;
-            const showRecents = moduleSiteMap.ShowRecents._text == "True" ? true : false;
+
+            let showHome = moduleSiteMap.ShowHome == undefined ? false : true;
+            let showPinned = moduleSiteMap.ShowPinned == undefined ? false : true;
+            let showRecents = moduleSiteMap.ShowRecents == undefined ? false : true;
 
             const siteMap = moduleSiteMap.SiteMap;
             if(siteMap != undefined) {
                 const areas:  SiteMapTypeArea[] = [];
-                const areaName = siteMap.Area.Titles.Title._attributes.Title;
+                const titleAreas: TitlesType_SiteMapTitle[] = [];
+
+                const areaTitles = siteMap.Area.Titles.Title;
+                
+                if(Array.isArray(areaTitles)) {
+                    areaTitles.forEach(element => {
+                        const titleAreaValue = new TitleValue(element._attributes.LCID,element._attributes.Title);
+                        titleAreas.push(new TitlesType_SiteMapTitle(titleAreaValue));
+                    });
+                } else {
+                    const titleAreaValue = new TitleValue("1033",areaTitles._attributes.Title);
+                    titleAreas.push(new TitlesType_SiteMapTitle(titleAreaValue));
+                }
                 const areaID = siteMap.Area._attributes.Id;
 
                 const group = siteMap.Area.Group;
@@ -166,9 +194,6 @@ function loadSiteMap(AppModuleSiteMaps: any) {
                     fillGroup(group,groups);
                 }
 
-                const titleAreas: TitlesType_SiteMapTitle[] = [];
-                const titleAreaValue = new TitleValue("1033",areaName);
-                titleAreas.push(new TitlesType_SiteMapTitle(titleAreaValue));
 
                 const area = new SiteMapTypeArea(areaID,titleAreas,groups);
                 areas.push(area);
@@ -180,12 +205,21 @@ function loadSiteMap(AppModuleSiteMaps: any) {
 }
 
 function fillGroup(element: any, groups: SiteMapTypeAreaGroup[]) {
-    const id = element._attributes.Id;
-    const title = element.Titles.Title._attributes.Title;
-
     const titleGroup: TitlesType_SiteMapTitle[] = [];
-    const titleGroupValue = new TitleValue("1033",title);
-    titleGroup.push(new TitlesType_SiteMapTitle(titleGroupValue));
+
+    const id = element._attributes.Id;
+    const titles = element.Titles != undefined ? element.Titles.Title : "NewGroup";
+    
+    if(Array.isArray(titles)) {
+        titles.forEach(element => {
+            const titleGroupValue = new TitleValue(element._attributes.LCID,element._attributes.Title);
+            titleGroup.push(new TitlesType_SiteMapTitle(titleGroupValue));
+        });
+    } else {
+        const name = titles._attributes != undefined ? titles._attributes.Title : titles;
+        const titleGroupValue = new TitleValue("1033",name);
+        titleGroup.push(new TitlesType_SiteMapTitle(titleGroupValue));
+    }
 
     const subAreas: SiteMapTypeAreaGroupSubArea[] = [];
 
@@ -194,11 +228,18 @@ function fillGroup(element: any, groups: SiteMapTypeAreaGroup[]) {
         subArea.forEach(elem => {
             const subAreaID = elem._attributes.Id;
             if(elem.Titles != undefined) {
-                const subAreaTitle = elem.Titles.Title._attributes.Title;
-
                 const titleSubAreas: TitlesType_SiteMapTitle[] = [];
-                const titleSubAreaValue = new TitleValue("1033",subAreaTitle);
-                titleSubAreas.push(new TitlesType_SiteMapTitle(titleSubAreaValue));
+                const subAreaTitles = elem.Titles.Title;
+                
+                if(Array.isArray(subAreaTitles)) {
+                    subAreaTitles.forEach(element => {
+                        const titleSubAreaValue = new TitleValue(element._attributes.LCID,element._attributes.Title);
+                        titleSubAreas.push(new TitlesType_SiteMapTitle(titleSubAreaValue));
+                    });
+                } else {
+                    const titleSubAreaValue = new TitleValue("1033",subAreaTitles._attributes.Title);
+                    titleSubAreas.push(new TitlesType_SiteMapTitle(titleSubAreaValue));
+                }
                 const subA = new SiteMapTypeAreaGroupSubArea(subAreaID, titleSubAreas);
                 subAreas.push(subA);
             }
@@ -271,31 +312,46 @@ function loadForm(Entities: any) {
 
 function addForm(form: any, formXML: SystemForm[]) {
     const type = form._attributes.type;
-    if (type == "main") {
-        const formID = form.systemform.formid._text;
-        const name = form.systemform.LocalizedNames.LocalizedName._attributes.description;
-        const frm = form.systemform.form;
-        if (frm != undefined) {
-            const tabs = frm.tabs;
+    if(type == "main") pushToForm(form, formXML);
 
-            const tbs = addTab(tabs);
-            const formTab = new FormTypeTabs(tbs);
-            const formType = new FormType(formTab,true);
+}
 
-            const localizatedName = new LocalizedName(name,"1033");
-            const localizatedNames: LocalizedName[] = [localizatedName];
-            
-            const form = new SystemForm(formType,formID,localizatedNames);
-            formXML.push(form);
+function pushToForm(form: any, formXML: SystemForm[]) {
+    const formID = form.systemform.formid._text;
+    const names = form.systemform.LocalizedNames.LocalizedName;
+    
+    const localizatedNames: LocalizedName[] = [];
+    if(Array.isArray(names)) {
+        names.forEach(element => {
+            localizatedNames.push(new LocalizedName(element._attributes.description,element._attributes.languagecode));
+        });
+    } else localizatedNames.push(new LocalizedName(names._attributes.description,"1033"));
+
+    const frm = form.systemform.form;
+    if (frm != undefined) {
+        const tabs = frm.tabs;
+
+        const tbs: FormTypeTabsTab[] = [];
+        if (Array.isArray(tabs)) {
+            tabs.forEach(element => {
+                addTab(element, tbs);
+            });
+        } else {
+            addTab(tabs, tbs);
         }
+        const formTab = new FormTypeTabs(tbs);
+        const formType = new FormType(formTab, true);
+
+        const form = new SystemForm(formType, formID, localizatedNames);
+        formXML.push(form);
     }
 }
 
-function addTab(tabs: any) {
+function addTab(tabs: any, tbs: FormTypeTabsTab[]) {
     const tab = tabs.tab;
     const id = tab._attributes.id;
     const name = tab._attributes.name;
-    const labelName = tab.labels.label._attributes.description;
+    const labelName = tab.labels == undefined ? "General" : tab.labels.label._attributes.description;
 
     const columns = tab.columns.column;
     const colmns: FormTypeTabsTabColumn[] = [];
@@ -307,7 +363,8 @@ function addTab(tabs: any) {
         addColumn(columns, colmns);
     }
     const label = new FormXmlLabelsTypeLabel(labelName,"1033");
-    return new FormTypeTabsTab(id, name,Guid.create().toString(),label, colmns);
+    const tb = new FormTypeTabsTab(id, name,Guid.create().toString(),label, colmns);
+    tbs.push(tb);
 }
 
 function addColumn(columns: any, colmns: FormTypeTabsTabColumn[]) {

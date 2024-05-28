@@ -39,7 +39,7 @@ export class FormType implements IFormType {
 export class FormTypeTabs implements IFormTypeTabs {
     tab: FormTypeTabsTab | FormTypeTabsTab[];
 
-    constructor(tab: FormTypeTabsTab) {
+    constructor(tab: FormTypeTabsTab | FormTypeTabsTab[]) {
         this.tab = tab;
     }
 }
